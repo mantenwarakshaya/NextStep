@@ -10,12 +10,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
+const branchRoutes = require("./routes/branchRoutes");
+
+app.use("/api/branches", branchRoutes);
+
 // Test Route
 app.get("/", (req, res) => {
     res.send("NextStep Backend is running successfully 🚀");
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 7777;
 
 // Connect MongoDB first, then start server
 connectDB()
