@@ -1,0 +1,552 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+/* ---------------------------------------------------------------------- */
+/* Design tokens                                                          */
+/* ---------------------------------------------------------------------- */
+:root {
+  --navy-900: #0a0f1e;
+  --navy-800: #101a30;
+  --navy-700: #172544;
+  --ink: #101828;
+  --muted: #5c6577;
+  --muted-light: #8891a3;
+  --bg: #f5f7fb;
+  --card-bg: #ffffff;
+  --border: #e5e9f2;
+
+  --cse: #1fb8a3;
+  --cse-soft: #e4f8f4;
+  --ece: #e0a133;
+  --ece-soft: #fbf1de;
+  --mech: #ea7452;
+  --mech-soft: #fdece5;
+  --civil: #4b83e8;
+  --civil-soft: #e7effd;
+  --other: #9b6ee3;
+  --other-soft: #f0e9fb;
+
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Base                                                                    */
+/* ---------------------------------------------------------------------- */
+.branches-explorer-bg {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg);
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+}
+
+.branches-explorer-bg * {
+  box-sizing: border-box;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Hero                                                                    */
+/* ---------------------------------------------------------------------- */
+.branches-hero {
+  background: radial-gradient(120% 160% at 12% 0%, #16233f 0%, var(--navy-900) 55%),
+    linear-gradient(160deg, var(--navy-800), var(--navy-900));
+  padding: 72px 8vw 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.branches-hero::after {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(31, 184, 163, 0.25), transparent 70%);
+  pointer-events: none;
+}
+
+.branches-hero-eyebrow {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cse);
+  margin: 0 0 18px;
+}
+
+.branches-hero-heading {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 44px;
+  line-height: 1.15;
+  font-weight: 700;
+  color: #ffffff;
+  max-width: 720px;
+  margin: 0 0 18px;
+  letter-spacing: -0.01em;
+}
+
+.branches-hero-subtext {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #b7c0d6;
+  max-width: 560px;
+  margin: 0 0 36px;
+}
+
+.branches-search-bar {
+  width: 100%;
+  max-width: 480px;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  backdrop-filter: blur(6px);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.branches-search-bar:focus-within {
+  border-color: var(--cse);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.branches-search-icon {
+  color: #8891a3;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+.branches-search-input {
+  flex-grow: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.branches-search-input::placeholder {
+  color: #7a8399;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Content wrapper                                                        */
+/* ---------------------------------------------------------------------- */
+.branches-content {
+  padding: 40px 8vw 96px;
+  margin-top: -48px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Category tabs                                                          */
+/* ---------------------------------------------------------------------- */
+.branches-category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  background-color: var(--card-bg);
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+  margin-bottom: 28px;
+}
+
+.branches-category-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--muted);
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.branches-category-tab:hover {
+  background-color: var(--bg);
+  color: var(--ink);
+}
+
+.branches-category-tab-active {
+  background-color: var(--navy-900);
+  color: #ffffff;
+}
+
+.branches-category-tab-active:hover {
+  background-color: var(--navy-900);
+  color: #ffffff;
+}
+
+.branches-category-tab-icon {
+  font-size: 16px;
+}
+
+.branches-source-note {
+  font-size: 13px;
+  color: var(--muted-light);
+  background-color: var(--civil-soft);
+  border: 1px dashed var(--civil);
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  margin: 0 0 24px;
+}
+
+.branches-source-note code {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 12.5px;
+  color: var(--navy-900);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Status views (loading / failure / empty)                               */
+/* ---------------------------------------------------------------------- */
+.branches-status-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 90px 20px;
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+
+.branches-status-heading {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+
+.branches-status-text {
+  font-size: 14.5px;
+  color: var(--muted);
+  max-width: 360px;
+  margin: 0;
+}
+
+.branches-retry-btn {
+  margin-top: 22px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #ffffff;
+  background-color: var(--navy-900);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 11px 26px;
+  cursor: pointer;
+  transition: opacity 0.18s ease;
+}
+
+.branches-retry-btn:hover {
+  opacity: 0.85;
+}
+
+.branches-loader {
+  width: 38px;
+  height: 38px;
+  border: 3px solid var(--border);
+  border-top-color: var(--cse);
+  border-radius: 50%;
+  animation: branches-spin 0.8s linear infinite;
+  margin-bottom: 18px;
+}
+
+@keyframes branches-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Grid + Cards                                                           */
+/* ---------------------------------------------------------------------- */
+.branches-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.branch-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  border-top: 4px solid var(--cse);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.branch-card:hover {
+  box-shadow: 0 14px 32px rgba(16, 24, 40, 0.1);
+  transform: translateY(-2px);
+}
+
+.branch-card-cse {
+  border-top-color: var(--cse);
+}
+
+.branch-card-ece {
+  border-top-color: var(--ece);
+}
+
+.branch-card-mech {
+  border-top-color: var(--mech);
+}
+
+.branch-card-civil {
+  border-top-color: var(--civil);
+}
+
+.branch-card-other {
+  border-top-color: var(--other);
+}
+
+.branch-card-head {
+  margin-bottom: 10px;
+}
+
+.branch-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 10px;
+  line-height: 1.3;
+}
+
+.branch-alias-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.branch-alias-chip {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--muted);
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.branch-alias-more {
+  color: var(--muted-light);
+}
+
+.branch-about {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0 0 16px;
+}
+
+.branch-card-cse .branch-about,
+.branch-card-cse ~ .branch-details {
+  --accent: var(--cse);
+}
+
+.branch-details {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.branch-detail-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-light);
+  margin: 0 0 10px;
+}
+
+.branch-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.branch-tag {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--navy-800);
+  background-color: var(--cse-soft);
+  border-radius: var(--radius-sm);
+  padding: 5px 11px;
+}
+
+.branch-card-ece .branch-tag {
+  background-color: var(--ece-soft);
+}
+
+.branch-card-mech .branch-tag {
+  background-color: var(--mech-soft);
+}
+
+.branch-card-civil .branch-tag {
+  background-color: var(--civil-soft);
+}
+
+.branch-card-other .branch-tag {
+  background-color: var(--other-soft);
+}
+
+.branch-tag-skill {
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.branch-career-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.branch-career-item {
+  font-size: 13.5px;
+  color: var(--ink);
+  padding-left: 16px;
+  position: relative;
+}
+
+.branch-career-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--cse);
+}
+
+.branch-card-ece .branch-career-item::before {
+  background-color: var(--ece);
+}
+
+.branch-card-mech .branch-career-item::before {
+  background-color: var(--mech);
+}
+
+.branch-card-civil .branch-career-item::before {
+  background-color: var(--civil);
+}
+
+.branch-card-other .branch-career-item::before {
+  background-color: var(--other);
+}
+
+.branch-card-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.branch-view-more-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy-800);
+  cursor: pointer;
+  padding: 8px 4px;
+}
+
+.branch-view-more-icon {
+  font-size: 13px;
+}
+
+.branch-select-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--navy-900);
+  border: none;
+  border-radius: 999px;
+  padding: 9px 18px;
+  cursor: pointer;
+  transition: opacity 0.18s ease;
+}
+
+.branch-select-btn:hover {
+  opacity: 0.85;
+}
+
+.branch-select-icon {
+  font-size: 13px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Responsive                                                             */
+/* ---------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .branches-hero {
+    padding: 56px 6vw 80px;
+  }
+
+  .branches-hero-heading {
+    font-size: 32px;
+  }
+
+  .branches-content {
+    padding: 32px 6vw 64px;
+  }
+
+  .branches-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .branch-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .branch-select-btn,
+  .branch-view-more-btn {
+    justify-content: center;
+  }
+}
