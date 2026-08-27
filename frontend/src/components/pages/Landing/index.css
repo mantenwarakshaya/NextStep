@@ -1,24 +1,24 @@
 /* ═══════════════ TOKENS ═══════════════ */
 :root{
-  --ink-950:#0e1a2b;
-  --ink-900:#132234;
-  --ink-800:#1c3049;
-  --paper:#f7f5ef;
-  --paper-dim:#eeece3;
-  --text:#16233a;
-  --muted:#5c6b82;
-  --muted-lt:#8b9ab0;
-  --hairline:#d8d4c6;
-  --hairline-dark:rgba(247,245,239,0.16);
+  --ink-950:#0f172a;
+  --ink-900:#1e293b;
+  --ink-800:#334155;
+  --paper:#f8fafc;
+  --paper-dim:#f1f5f9;
+  --text:#0f172a;
+  --muted:#475569;
+  --muted-lt:#94a3b8;
+  --hairline:#e2e8f0;
+  --hairline-dark:rgba(248,250,252,0.16);
 
-  --line-mern:#2c9e93;
-  --line-mern-dim:#dff0ee;
-  --line-ai:#7c6fd6;
-  --line-ai-dim:#e9e6fa;
-  --line-ds:#d9a441;
-  --line-ds-dim:#f8ecd6;
-  --line-cyber:#e0665f;
-  --line-cyber-dim:#fbe4e2;
+  --line-mern:#1d4ed8;
+  --line-mern-dim:#eff6ff;
+  --line-ai:#15803d;
+  --line-ai-dim:#ecfdf5;
+  --line-ds:#b45309;
+  --line-ds-dim:#fffbeb;
+  --line-cyber:#b91c1c;
+  --line-cyber-dim:#fef2f2;
 
   --active:var(--line-mern);
   --active-dim:var(--line-mern-dim);
@@ -29,6 +29,10 @@
   --maxw:1180px;
   --ease:cubic-bezier(.4,0,.2,1);
 }
+
+.landing-page--ai{--active:#7c6fd6;--active-dim:#e9e6fa;}
+.landing-page--ds{--active:#d9a441;--active-dim:#f8ecd6;}
+.landing-page--cyber{--active:#e0665f;--active-dim:#fbe4e2;}
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
@@ -124,7 +128,7 @@ a{color:inherit;}
   border:none;cursor:pointer;text-decoration:none;
   transition:transform .18s var(--ease), box-shadow .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease);
 }
-.btn-solid{background:var(--active);color:#0e1a2b;box-shadow:0 6px 18px -6px rgba(0,0,0,.5);}
+.btn-solid{background:var(--active);color:#fff;box-shadow:0 6px 18px -6px rgba(0,0,0,.5);}
 .btn-solid:hover{transform:translateY(-1px);filter:brightness(1.06);}
 .btn-outline{background:transparent;color:var(--paper);border:1px solid rgba(255,255,255,.28);}
 .btn-outline:hover{border-color:rgba(255,255,255,.6);}
@@ -171,10 +175,7 @@ section.block{padding:5.5rem 0;}
   scroll-margin-top:64px;
 }
 
-/* ═══════════════ VIEWPORT-HEIGHT GROUPS ═══════════════
-   Each .vh-screen pairs sections so the group together fills exactly one
-   screen (viewport height minus the 64px sticky nav). Children share that
-   height equally and scroll internally if their content runs long. */
+/* ═══════════════ VIEWPORT-HEIGHT GROUPS ═══════════════ */
 .vh-screen{
   height:calc(100vh - 64px);
   display:flex;
@@ -197,10 +198,7 @@ section.block{padding:5.5rem 0;}
 .vh-screen footer{padding:1.1rem 0;border-top:1px solid rgba(255,255,255,.1);flex:0 0 auto;}
 .vh-screen .steps-row{flex:1;}
 
-/* ═══════════════ FULL-SCREEN STANDALONE SECTIONS ═══════════════
-   #roadmap and #board each get their own full screen (not grouped
-   together). Centering + internal scroll keeps the box locked at exactly
-   one viewport even if the semester line or board list runs long. */
+/* ═══════════════ FULL-SCREEN STANDALONE SECTIONS ═══════════════ */
 .roadmap, .board{
   height:calc(100vh - 64px);
   display:flex;
@@ -212,9 +210,6 @@ section.block{padding:5.5rem 0;}
   width:100%;
 }
 
-/* Below the breakpoint where sections already reflow to stacked/mobile
-   layouts, forcing a fixed one-screen height would clip content instead
-   of scrolling it, so let each section grow to its natural height instead. */
 @media(max-width:900px){
   .vh-screen{height:auto;}
   .vh-screen > *{flex:none;overflow:visible;justify-content:flex-start;}

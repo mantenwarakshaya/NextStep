@@ -1,22 +1,22 @@
 :root {
-  --auth-ink-950:#0e1a2b;
-  --auth-ink-900:#132234;
-  --auth-ink-800:#1c3049;
-  --auth-paper:#f7f5ef;
-  --auth-paper-dim:#eeece3;
-  --auth-text:#16233a;
-  --auth-muted:#5c6b82;
-  --auth-muted-lt:#8b9ab0;
-  --auth-hairline:#d8d4c6;
-  --auth-hairline-dark:rgba(247,245,239,0.16);
+  --auth-ink-950:#0f172a;
+  --auth-ink-900:#1e293b;
+  --auth-ink-800:#334155;
+  --auth-paper:#f8fafc;
+  --auth-paper-dim:#f1f5f9;
+  --auth-text:#0f172a;
+  --auth-muted:#475569;
+  --auth-muted-lt:#94a3b8;
+  --auth-hairline:#e2e8f0;
+  --auth-hairline-dark:rgba(248,250,252,0.16);
 
-  --auth-accent:#2c9e93;
-  --auth-accent-dim:#dff0ee;
-  --auth-accent-hover:#25887e;
+  --auth-accent:#2a4fcb;
+  --auth-accent-dim:#eef2ff;
+  --auth-accent-hover:#1e3fb0;
 
-  --auth-error:#c0453f;
-  --auth-error-bg:#fbe4e2;
-  --auth-error-border:#f0c4c0;
+  --auth-error:#b91c1c;
+  --auth-error-bg:#fef2f2;
+  --auth-error-border:#f5c2c2;
 
   --auth-radius-s:4px;
   --auth-radius-m:10px;
@@ -304,12 +304,12 @@ body {
   border: 1px solid transparent;
   border-radius: var(--auth-radius-s);
   background: var(--auth-accent);
-  color: var(--auth-ink-950);
+  color: #ffffff;
   font: inherit;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 6px 18px -6px rgba(44, 158, 147, 0.45);
+  box-shadow: 0 6px 18px -6px rgba(42, 79, 203, 0.45);
   transition: transform 160ms var(--auth-ease), filter 160ms var(--auth-ease), opacity 160ms var(--auth-ease);
 }
 
@@ -327,7 +327,7 @@ body {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--auth-ink-950);
+  background: #ffffff;
   animation: auth-pulse 1s infinite;
 }
 

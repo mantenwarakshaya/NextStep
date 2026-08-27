@@ -24,12 +24,6 @@ export default function NextStepApp() {
   const [activeLine, setActiveLine] = useState('mern');
   const line = LINES[activeLine];
 
-  useEffect(() => {
-    const root = document.documentElement;
-    root.style.setProperty('--active', line.color);
-    root.style.setProperty('--active-dim', line.dim);
-  }, [activeLine, line.color, line.dim]);
-
   // Smooth-scroll to the section matching the URL hash, and re-run on hash changes
   useEffect(() => {
     const scrollToHash = () => {
@@ -44,7 +38,9 @@ export default function NextStepApp() {
   }, []);
 
   return (
-    <>
+    <div
+      className={`landing-page landing-page--${activeLine}`}
+    >
       <nav className="nav">
         <div className="nav-inner">
           <div className="nav-brand"><span className="dot" id="navDot"></span>NextStep</div>
@@ -240,6 +236,6 @@ export default function NextStepApp() {
           </div>
         </footer>
       </div>
-    </>
+    </div>
   );
 }
