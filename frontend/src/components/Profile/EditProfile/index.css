@@ -1,0 +1,865 @@
+/* =========================================================
+   NEXTSTEP — EDIT PROFILE
+   Vertical Account Settings
+   ========================================================= */
+:root {
+  --ep-ink-950: #0f172a;
+  --ep-ink-900: #1e293b;
+  --ep-paper: #f8fafc;
+  --ep-white: #ffffff;
+  --ep-border: #e2e8f0;
+  --ep-border-dark: #cbd5e1;
+  --ep-text: #0f172a;
+  --ep-muted: #475569;
+  --ep-light: #94a3b8;
+  --ep-blue: #2a4fcb;
+  --ep-blue-dark: #1e40af;
+  --ep-blue-soft: #eef2ff;
+  --ep-green: #15803d;
+  --ep-green-soft: #f0fdf4;
+  --ep-red: #b91c1c;
+  --ep-red-soft: #fef2f2;
+  --ep-radius-s: 6px;
+  --ep-radius-m: 9px;
+  --ep-radius-l: 12px;
+
+  /* derived — same colors, expressed as soft shadows/rings so
+     panels lift off the page instead of relying on borders alone */
+  --ep-shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.10);
+  --ep-shadow-card-hover: 0 1px 2px rgba(15, 23, 42, 0.05), 0 14px 32px -14px rgba(15, 23, 42, 0.14);
+  --ep-ring-blue: 0 0 0 3px rgba(42, 79, 203, 0.12);
+  --ep-ring-red: 0 0 0 3px rgba(185, 28, 28, 0.10);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   WORKSPACE
+   ========================================================= */
+.ep-workspace {
+  min-height: 100vh;
+  background:
+    radial-gradient(1100px 420px at 12% -10%, var(--ep-blue-soft) 0%, transparent 60%),
+    var(--ep-paper);
+  color: var(--ep-text);
+  padding: 2.5rem 2.5rem 4rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =========================================================
+   SHELL
+   ========================================================= */
+.ep-shell {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+.ep-page-header {
+  padding-bottom: 1.35rem;
+  border-bottom: 1px solid var(--ep-border);
+}
+.ep-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.ep-header-copy {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex: 1;
+  min-width: 0;
+}
+.ep-header-eyebrow {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--ep-blue);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+.ep-header-title h1 {
+  margin: 0;
+  color: var(--ep-text);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 23px;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.ep-header-title p {
+  margin: 4px 0 0;
+  color: var(--ep-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* Small identity mark — reflects the account being edited,
+   not decoration for its own sake */
+.ep-avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--ep-ink-950);
+  color: var(--ep-white);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
+.ep-back-btn {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ep-border);
+  border-radius: var(--ep-radius-s);
+  background: var(--ep-white);
+  color: var(--ep-muted);
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+.ep-back-btn:hover {
+  border-color: var(--ep-border-dark);
+  background: var(--ep-paper);
+  color: var(--ep-text);
+  transform: translateX(-1px);
+}
+.ep-back-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ep-ring-blue);
+  border-color: var(--ep-blue);
+}
+.ep-back-btn svg {
+  font-size: 11px;
+}
+
+/* =========================================================
+   MAIN SETTINGS LAYOUT
+   ========================================================= */
+.ep-settings-layout {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 1.75rem;
+  margin-top: 1.75rem;
+  align-items: stretch;
+}
+
+/* =========================================================
+   LEFT SETTINGS NAVIGATION
+   ========================================================= */
+.ep-settings-nav {
+  padding: 0.45rem;
+  background: var(--ep-white);
+  border: 1px solid var(--ep-border);
+  border-radius: var(--ep-radius-l);
+  box-shadow: var(--ep-shadow-card);
+  position: sticky;
+  top: 1.5rem;
+}
+.ep-settings-nav-title {
+  padding: 0.6rem 0.7rem 0.7rem;
+  color: var(--ep-light);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   TABS
+   ========================================================= */
+.ep-settings-nav nav {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.ep-tab {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px 11px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ep-muted);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.ep-tab:hover {
+  background: var(--ep-paper);
+  color: var(--ep-text);
+}
+.ep-tab:focus-visible {
+  outline: none;
+  box-shadow: var(--ep-ring-blue);
+}
+.ep-tab.active {
+  background: var(--ep-blue-soft);
+  color: var(--ep-text);
+}
+.ep-tab.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--ep-blue);
+}
+.ep-tab-title {
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.ep-tab-description {
+  margin-top: 2px;
+  color: var(--ep-light);
+  font-size: 8.5px;
+  line-height: 1.3;
+}
+.ep-tab.active .ep-tab-description {
+  color: #64748b;
+}
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+.ep-content {
+  min-width: 0;
+}
+
+/* =========================================================
+   MAIN PANEL
+   ========================================================= */
+.ep-panel {
+  width: 100%;
+  min-height: 470px;
+  padding: 2rem;
+  background: var(--ep-white);
+  border: 1px solid var(--ep-border);
+  border-radius: var(--ep-radius-l);
+  box-shadow: var(--ep-shadow-card);
+}
+/* =========================================================
+   PANEL HEADER
+   ========================================================= */
+.ep-panel-header {
+  margin-bottom: 1.3rem;
+}
+.ep-panel-header h2 {
+  margin: 0;
+  color: var(--ep-text);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+.ep-panel-header p {
+  margin: 4px 0 0;
+  color: var(--ep-muted);
+  font-size: 10px;
+  line-height: 1.5;
+  max-width: 46ch;
+}
+
+/* =========================================================
+   KICKER
+   ========================================================= */
+.ep-kicker {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ep-blue);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   FORM GRID
+   ========================================================= */
+.ep-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem;
+  padding-bottom: 1.3rem;
+  border-bottom: 1px solid #edf1f5;
+}
+
+/* =========================================================
+   FIELD
+   ========================================================= */
+.ep-field {
+  min-width: 0;
+}
+.ep-semester-field {
+  grid-column: 1 / -1;
+  max-width: none;
+}
+.ep-field label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--ep-muted);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+.ep-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.ep-input-wrapper svg {
+  position: absolute;
+  left: 11px;
+  color: var(--ep-light);
+  font-size: 9.5px;
+  pointer-events: none;
+  transition: color 0.15s ease;
+}
+.ep-input-wrapper input {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px 0 30px;
+  border: 1px solid var(--ep-border-dark);
+  border-radius: 7px;
+  outline: none;
+  background: var(--ep-white);
+  color: var(--ep-text);
+  font-size: 11px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.ep-input-wrapper input:hover {
+  border-color: var(--ep-light);
+}
+.ep-input-wrapper input:focus {
+  border-color: var(--ep-blue);
+  box-shadow: var(--ep-ring-blue);
+}
+.ep-input-wrapper input:focus + svg,
+.ep-input-wrapper:focus-within svg {
+  color: var(--ep-blue);
+}
+.ep-input-wrapper input::placeholder {
+  color: var(--ep-light);
+}
+
+/* =========================================================
+   SEMESTER PROGRESS PICKER
+   Signature element: current semester is progress through a
+   known 8-term arc, not just an arbitrary list choice — so it
+   reads as a track, not a dropdown.
+   ========================================================= */
+.ep-semester-picker {
+  padding: 12px 14px 14px;
+  background: var(--ep-paper);
+  border: 1px solid var(--ep-border);
+  border-radius: var(--ep-radius-m);
+}
+.ep-semester-track {
+  display: flex;
+  align-items: center;
+}
+.ep-semester-node-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+.ep-semester-node-wrap:last-child {
+  flex: 0 0 auto;
+}
+.ep-semester-node {
+  width: 27px;
+  height: 27px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ep-border-dark);
+  border-radius: 50%;
+  background: var(--ep-white);
+  color: var(--ep-muted);
+  font-size: 9.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+.ep-semester-node:hover {
+  border-color: var(--ep-blue);
+  color: var(--ep-blue);
+}
+.ep-semester-node:focus-visible {
+  outline: none;
+  box-shadow: var(--ep-ring-blue);
+}
+.ep-semester-node.filled {
+  background: var(--ep-blue);
+  border-color: var(--ep-blue);
+  color: var(--ep-white);
+}
+.ep-semester-node.current {
+  box-shadow: 0 0 0 3px var(--ep-blue-soft);
+}
+.ep-semester-node.current:focus-visible {
+  box-shadow: 0 0 0 3px var(--ep-blue-soft), var(--ep-ring-blue);
+}
+.ep-semester-connector {
+  flex: 1;
+  height: 2px;
+  min-width: 6px;
+  margin: 0 3px;
+  background: var(--ep-border-dark);
+  border-radius: 1px;
+  transition: background 0.15s ease;
+}
+.ep-semester-connector.filled {
+  background: var(--ep-blue);
+}
+.ep-semester-caption {
+  margin: 10px 0 0;
+  color: var(--ep-muted);
+  font-size: 10px;
+}
+.ep-semester-caption strong {
+  color: var(--ep-text);
+  font-weight: 600;
+}
+
+/* =========================================================
+   MESSAGES
+   ========================================================= */
+.ep-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0.9rem;
+  padding: 8px 10px;
+  border-radius: 7px;
+  font-size: 10px;
+}
+.ep-message svg {
+  flex-shrink: 0;
+  font-size: 9px;
+}
+.ep-message-error {
+  background: var(--ep-red-soft);
+  border: 1px solid #fecaca;
+  color: var(--ep-red);
+}
+.ep-message-success {
+  background: var(--ep-green-soft);
+  border: 1px solid #bbf7d0;
+  color: var(--ep-green);
+}
+
+/* =========================================================
+   FORM FOOTER
+   ========================================================= */
+.ep-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 1rem;
+}
+.ep-cancel-btn,
+.ep-save-btn {
+  height: 33px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.ep-cancel-btn {
+  border: 1px solid var(--ep-border);
+  background: var(--ep-white);
+  color: var(--ep-muted);
+}
+.ep-cancel-btn:hover {
+  border-color: var(--ep-border-dark);
+  color: var(--ep-text);
+}
+.ep-cancel-btn:focus-visible,
+.ep-save-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ep-ring-blue);
+}
+.ep-save-btn {
+  border: 1px solid var(--ep-ink-950);
+  background: var(--ep-ink-950);
+  color: var(--ep-white);
+}
+.ep-save-btn:hover {
+  background: var(--ep-ink-900);
+}
+.ep-save-btn:active {
+  transform: translateY(1px);
+}
+.ep-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================================================
+   SECURITY
+   ========================================================= */
+.ep-security-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+}
+.ep-large-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--ep-blue-soft);
+  color: var(--ep-blue);
+  font-size: 12px;
+}
+.ep-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--ep-border);
+  border-bottom: 1px solid var(--ep-border);
+}
+.ep-info-row > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.ep-info-row strong {
+  color: var(--ep-text);
+  font-size: 11px;
+}
+.ep-info-row span {
+  color: var(--ep-muted);
+  font-size: 10px;
+}
+.ep-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 5px;
+  background: var(--ep-green-soft);
+  color: var(--ep-green);
+  font-size: 9px !important;
+  font-weight: 600;
+}
+.ep-status-badge::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ep-green);
+}
+.ep-security-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 0.9rem;
+  padding: 10px;
+  background: var(--ep-paper);
+  border: 1px solid var(--ep-border);
+  border-radius: 7px;
+}
+.ep-security-note svg {
+  margin-top: 2px;
+  flex-shrink: 0;
+  color: var(--ep-light);
+  font-size: 10px;
+}
+.ep-security-note p {
+  margin: 0;
+  color: var(--ep-muted);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+/* =========================================================
+   DANGER ZONE
+   ========================================================= */
+.ep-danger-panel {
+  border-color: #fecaca;
+}
+.ep-danger-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+}
+.ep-danger-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--ep-red-soft);
+  color: var(--ep-red);
+  font-size: 12px;
+}
+.ep-danger-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.95rem 0;
+  border-top: 1px solid #fee2e2;
+}
+.ep-danger-row > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ep-danger-row strong {
+  color: var(--ep-text);
+  font-size: 11px;
+}
+.ep-danger-row span {
+  max-width: 460px;
+  color: var(--ep-muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+.ep-delete-btn {
+  height: 32px;
+  flex-shrink: 0;
+  padding: 0 12px;
+  border: 1px solid #fecaca;
+  border-radius: 7px;
+  background: var(--ep-red-soft);
+  color: var(--ep-red);
+  font-size: 9.5px;
+  font-weight: 600;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+.ep-danger-disabled {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0.6rem 0 0;
+  color: #9f1239;
+  font-size: 9px;
+}
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+.ep-loading {
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: var(--ep-muted);
+  font-size: 12px;
+}
+.ep-loading-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ep-blue);
+  animation: ep-pulse 1s ease-in-out infinite;
+}
+.ep-loading-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.ep-loading-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes ep-pulse {
+  0%, 80%, 100% { opacity: 0.25; transform: scale(0.85); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+/* =========================================================
+   ERROR PAGE
+   ========================================================= */
+.ep-error-page {
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.ep-error-page > svg {
+  margin-bottom: 10px;
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--ep-red-soft);
+  color: var(--ep-red);
+  font-size: 20px;
+}
+.ep-error-page h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 16px;
+}
+.ep-error-page p {
+  max-width: 400px;
+  margin: 6px 0 14px;
+  color: var(--ep-muted);
+  font-size: 11px;
+}
+
+/* =========================================================
+   DARK BUTTON
+   ========================================================= */
+.ep-dark-btn {
+  height: 33px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 7px;
+  background: var(--ep-ink-950);
+  color: var(--ep-white);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.ep-dark-btn:hover {
+  background: var(--ep-ink-900);
+}
+.ep-dark-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ep-ring-blue);
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+@media (max-width: 850px) {
+  .ep-workspace {
+    padding: 1.5rem 1.25rem 2.25rem;
+  }
+  .ep-shell {
+    max-width: 100%;
+  }
+  .ep-settings-layout {
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 1.1rem;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+@media (max-width: 650px) {
+  .ep-workspace {
+    padding: 1rem 0.75rem 2rem;
+    background: var(--ep-paper);
+  }
+  .ep-settings-layout {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .ep-settings-nav {
+    padding: 0.35rem;
+    position: static;
+  }
+  .ep-settings-nav-title {
+    display: none;
+  }
+  .ep-settings-nav nav {
+    flex-direction: row;
+  }
+  .ep-tab {
+    flex: 1;
+    align-items: center;
+    padding: 8px 5px;
+    text-align: center;
+  }
+  .ep-tab.active::before {
+    left: 8px;
+    right: 8px;
+    top: auto;
+    bottom: 0;
+    width: auto;
+    height: 2px;
+  }
+  .ep-tab-description {
+    display: none;
+  }
+  .ep-panel {
+    padding: 1.1rem;
+  }
+  .ep-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .ep-semester-node {
+    width: 24px;
+    height: 24px;
+    font-size: 9px;
+  }
+  .ep-form-footer {
+    justify-content: stretch;
+  }
+  .ep-cancel-btn,
+  .ep-save-btn {
+    flex: 1;
+  }
+  .ep-danger-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .ep-delete-btn {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

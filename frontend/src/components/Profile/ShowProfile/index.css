@@ -1,0 +1,837 @@
+/* ════════════════════════════════════════════════
+   PROFILE — NextStep
+   Professional Career Snapshot
+   ════════════════════════════════════════════════ */
+
+:root {
+  --ns-ink-950: #0f172a;
+  --ns-ink-900: #1e293b;
+
+  --ns-paper: #f8fafc;
+  --ns-white: #ffffff;
+
+  --ns-hairline: #e2e8f0;
+  --ns-hairline-strong: #cbd5e1;
+
+  --ns-text: #0f172a;
+  --ns-muted: #475569;
+  --ns-muted-lt: #94a3b8;
+
+  --ns-accent: #2a4fcb;
+  --ns-accent-dark: #1e40af;
+  --ns-accent-dim: #eef2ff;
+
+  --ns-success: #15803d;
+  --ns-success-dim: #f0fdf4;
+
+  --ns-radius-s: 6px;
+  --ns-radius-m: 10px;
+  --ns-radius-l: 14px;
+}
+
+/* ════════════════════════════════════════════════
+   PAGE
+   ════════════════════════════════════════════════ */
+
+.p-profile-workspace {
+  min-height: 100vh;
+  background: var(--ns-paper);
+  color: var(--ns-text);
+
+  font-family:
+    "IBM Plex Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  padding: 2.2rem 2.8rem 3.5rem;
+}
+
+.p-profile-shell {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* ════════════════════════════════════════════════
+   MAIN PROFILE CARD
+   ════════════════════════════════════════════════ */
+
+.p-profile-card {
+  background: var(--ns-white);
+  border: 1px solid var(--ns-hairline);
+  border-radius: var(--ns-radius-l);
+
+  padding: 2rem;
+}
+
+.p-profile-card h1,
+.p-profile-card h2,
+.p-profile-card h3 {
+  font-family: "Fraunces", Georgia, serif;
+
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+/* ════════════════════════════════════════════════
+   PROFILE HEADER
+   ════════════════════════════════════════════════ */
+
+.p-profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 1.5rem;
+
+  padding-bottom: 1.7rem;
+  margin-bottom: 1.6rem;
+
+  border-bottom: 1px solid var(--ns-hairline);
+}
+
+.p-identity-group {
+  display: flex;
+  align-items: center;
+  gap: 1.05rem;
+
+  min-width: 0;
+}
+
+.p-avatar-initial {
+  width: 54px;
+  height: 54px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: var(--ns-ink-950);
+  color: #fff;
+
+  font-family: "Fraunces", Georgia, serif;
+
+  font-size: 19px;
+  font-weight: 600;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.p-identity-copy {
+  min-width: 0;
+}
+
+.p-identity-copy h1 {
+  font-size: 22px;
+  line-height: 1.2;
+
+  margin: 0 0 5px;
+}
+
+.p-email-line {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  margin: 0 0 9px;
+
+  color: var(--ns-muted);
+
+  font-size: 13px;
+}
+
+.p-email-line svg {
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.p-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  max-width: 100%;
+
+  background: var(--ns-accent-dim);
+  color: var(--ns-accent);
+
+  padding: 5px 11px;
+
+  border-radius: var(--ns-radius-s);
+
+  font-size: 12px;
+  font-weight: 600;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.p-role-badge svg {
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+/* ════════════════════════════════════════════════
+   EDIT BUTTON
+   ════════════════════════════════════════════════ */
+
+.p-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  flex-shrink: 0;
+
+  background: var(--ns-ink-950);
+  color: #fff;
+
+  padding: 9px 16px;
+
+  border-radius: var(--ns-radius-s);
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-decoration: none;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.p-primary-btn:hover {
+  background: var(--ns-ink-900);
+  transform: translateY(-1px);
+}
+
+/* ════════════════════════════════════════════════
+   SECTION HEADERS
+   ════════════════════════════════════════════════ */
+
+.p-section-header {
+  margin-bottom: 1rem;
+}
+
+.p-section-kicker {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: var(--ns-muted-lt);
+
+  font-family: "IBM Plex Mono", monospace;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.p-section-header h2,
+.p-card-heading h2,
+.p-nextstep-header h2,
+.p-roadmap-summary-header h2 {
+  margin: 0;
+
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+/* ════════════════════════════════════════════════
+   PROFILE OVERVIEW
+   ════════════════════════════════════════════════ */
+
+.p-overview-section {
+  margin-bottom: 1.6rem;
+}
+
+.p-metric-grid {
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 0.75rem;
+}
+
+.p-metric-card {
+  min-width: 0;
+
+  padding: 0.9rem 1rem;
+
+  background: #fff;
+
+  border: 1px solid var(--ns-hairline);
+  border-radius: var(--ns-radius-m);
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.p-metric-card:hover {
+  border-color: var(--ns-hairline-strong);
+
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+.p-metric-label {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: var(--ns-muted-lt);
+
+  font-family: "IBM Plex Mono", monospace;
+
+  font-size: 9.5px;
+
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.p-metric-value {
+  color: var(--ns-text);
+
+  font-size: 13px;
+  font-weight: 600;
+
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+}
+
+.p-inline-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.p-inline-value svg {
+  color: var(--ns-accent);
+
+  font-size: 11px;
+
+  flex-shrink: 0;
+}
+
+/* ════════════════════════════════════════════════
+   CAREER SNAPSHOT
+   ════════════════════════════════════════════════ */
+
+.p-career-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 0.9rem;
+
+  margin-bottom: 1.5rem;
+}
+
+.p-progress-card,
+.p-focus-card {
+  min-width: 0;
+
+  padding: 1.3rem;
+
+  background: #fff;
+
+  border: 1px solid var(--ns-hairline);
+  border-radius: var(--ns-radius-l);
+}
+
+.p-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  margin-bottom: 1.2rem;
+}
+
+.p-progress-icon,
+.p-focus-icon {
+  width: 32px;
+  height: 32px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  font-size: 13px;
+}
+
+.p-progress-icon {
+  background: var(--ns-accent-dim);
+  color: var(--ns-accent);
+}
+
+.p-focus-icon {
+  background: var(--ns-success-dim);
+  color: var(--ns-success);
+}
+
+/* ════════════════════════════════════════════════
+   CAREER PROGRESS
+   ════════════════════════════════════════════════ */
+
+.p-progress-main {
+  display: flex;
+  align-items: center;
+
+  gap: 1rem;
+
+  margin-bottom: 1.15rem;
+}
+
+.p-progress-number {
+  display: flex;
+  align-items: baseline;
+
+  min-width: 76px;
+}
+
+.p-progress-number strong {
+  font-family: "Fraunces", Georgia, serif;
+
+  font-size: 32px;
+  line-height: 1;
+}
+
+.p-progress-number span {
+  margin-left: 3px;
+
+  color: var(--ns-muted-lt);
+
+  font-size: 14px;
+}
+
+.p-progress-copy {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.p-progress-copy strong {
+  font-size: 13px;
+}
+
+.p-progress-copy span {
+  color: var(--ns-muted);
+
+  font-size: 11.5px;
+}
+
+.p-progress-track {
+  width: 100%;
+  height: 7px;
+
+  overflow: hidden;
+
+  background: #e8edf3;
+
+  border-radius: 20px;
+}
+
+.p-progress-fill {
+  height: 100%;
+
+  background: var(--ns-accent);
+
+  border-radius: inherit;
+
+  transition: width 0.4s ease;
+}
+
+.p-progress-footer {
+  display: flex;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-top: 7px;
+
+  color: var(--ns-muted-lt);
+
+  font-size: 9px;
+}
+
+.p-progress-footer span:nth-child(2) {
+  text-align: center;
+}
+
+/* ════════════════════════════════════════════════
+   CURRENT FOCUS
+   ════════════════════════════════════════════════ */
+
+.p-focus-description {
+  margin: -0.35rem 0 0.95rem;
+
+  color: var(--ns-muted);
+
+  font-size: 11.5px;
+  line-height: 1.55;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+}
+
+.p-focus-list {
+  display: grid;
+
+  gap: 7px;
+}
+
+.p-focus-item {
+  display: flex;
+  align-items: center;
+
+  min-height: 27px;
+
+  gap: 9px;
+
+  padding-bottom: 6px;
+
+  border-bottom: 1px solid #f1f5f9;
+
+  color: var(--ns-text);
+
+  font-size: 11.5px;
+
+  line-height: 1.35;
+}
+
+.p-focus-item:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.p-focus-dot {
+  width: 6px;
+  height: 6px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: var(--ns-accent);
+}
+
+.p-focus-loading {
+  padding: 0.5rem 0;
+
+  color: var(--ns-muted-lt);
+
+  font-size: 11.5px;
+}
+
+.p-focus-empty {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  color: var(--ns-muted);
+
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.p-focus-empty a {
+  color: var(--ns-accent);
+
+  font-weight: 600;
+
+  text-decoration: none;
+}
+
+.p-focus-empty a:hover {
+  text-decoration: underline;
+}
+
+/* ════════════════════════════════════════════════
+   AI ROADMAP SUMMARY
+   ════════════════════════════════════════════════ */
+
+.p-roadmap-summary {
+  margin-bottom: 1.5rem;
+
+  padding: 1.25rem 1.3rem;
+
+  background: #fbfcff;
+
+  border: 1px solid var(--ns-hairline);
+  border-radius: var(--ns-radius-l);
+}
+
+.p-roadmap-summary-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  margin-bottom: 1rem;
+}
+
+.p-roadmap-summary-header > svg {
+  color: var(--ns-accent);
+
+  font-size: 17px;
+
+  margin-top: 2px;
+}
+
+.p-roadmap-summary-content {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 1.5rem;
+}
+
+.p-summary-label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: var(--ns-muted-lt);
+
+  font-family: "IBM Plex Mono", monospace;
+
+  font-size: 8.5px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.p-roadmap-summary-content p {
+  margin: 0;
+
+  color: var(--ns-muted);
+
+  font-size: 11.5px;
+  line-height: 1.55;
+}
+
+/* ════════════════════════════════════════════════
+   NEXTSTEP
+   ════════════════════════════════════════════════ */
+
+.p-nextstep-section {
+  padding-top: 1.45rem;
+
+  border-top: 1px solid var(--ns-hairline);
+}
+
+.p-nextstep-header {
+  margin-bottom: 1rem;
+}
+
+.p-nextstep-header p {
+  margin: 4px 0 0;
+
+  color: var(--ns-muted);
+
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.p-action-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 0.75rem;
+}
+
+.p-action-card {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 11px;
+
+  min-width: 0;
+
+  padding: 0.95rem;
+
+  background: #fff;
+
+  border: 1px solid var(--ns-hairline);
+  border-radius: var(--ns-radius-m);
+
+  color: inherit;
+  text-decoration: none;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.p-action-card:hover {
+  border-color: var(--ns-accent);
+
+  box-shadow: 0 5px 15px rgba(15, 23, 42, 0.06);
+
+  transform: translateY(-2px);
+}
+
+.p-action-icon {
+  width: 31px;
+  height: 31px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--ns-accent-dim);
+  color: var(--ns-accent);
+
+  border-radius: 7px;
+
+  font-size: 12px;
+}
+
+.p-action-content {
+  min-width: 0;
+}
+
+.p-action-content h3 {
+  margin: 0 0 3px;
+
+  font-size: 13.5px;
+}
+
+.p-action-content p {
+  margin: 0 0 7px;
+
+  color: var(--ns-muted);
+
+  font-size: 10.5px;
+  line-height: 1.45;
+}
+
+.p-action-link {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  color: var(--ns-accent);
+
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.p-action-link span {
+  transition: transform 0.15s ease;
+}
+
+.p-action-card:hover .p-action-link span {
+  transform: translateX(3px);
+}
+
+/* ════════════════════════════════════════════════
+   TABLET
+   ════════════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+  .p-profile-workspace {
+    padding: 1.8rem 1.5rem 3rem;
+  }
+
+  .p-profile-shell {
+    max-width: 100%;
+  }
+
+  .p-metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .p-career-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .p-action-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ════════════════════════════════════════════════
+   MOBILE
+   ════════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+  .p-profile-workspace {
+    padding: 1rem 0.9rem 2.5rem;
+  }
+
+  .p-profile-card {
+    padding: 1.2rem;
+  }
+
+  .p-profile-header {
+    flex-direction: column;
+
+    gap: 1.1rem;
+  }
+
+  .p-primary-btn {
+    width: 100%;
+  }
+
+  .p-metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .p-career-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .p-roadmap-summary-content {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .p-action-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .p-progress-footer {
+    font-size: 8px;
+  }
+}
+
+/* ════════════════════════════════════════════════
+   REDUCED MOTION
+   ════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
