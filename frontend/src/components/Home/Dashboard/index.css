@@ -1,0 +1,934 @@
+/* ════════════════════════════════════════════════
+   DASHBOARD — NextStep
+   Professional / Minimalist Revision
+   Same color tokens, unified type system, quieter accents
+   ════════════════════════════════════════════════ */
+
+:root {
+  --ns-ink-950: #0f172a;
+  --ns-ink-900: #1e293b;
+
+  --ns-paper: #f8fafc;
+  --ns-paper-dim: #f1f5f9;
+
+  --ns-hairline: #e2e8f0;
+
+  --ns-text: #0f172a;
+  --ns-muted: #475569;
+  --ns-muted-lt: #94a3b8;
+
+  --ns-accent: #2a4fcb;
+  --ns-accent-dim: #eef2ff;
+
+  --ns-blue: #0369a1;
+  --ns-blue-dim: #e0f2fe;
+
+  --ns-violet: #7c6fd6;
+  --ns-violet-dim: #e9e6fa;
+
+  --ns-green: #15803d;
+  --ns-green-dim: #f0fdf4;
+
+  --ns-radius-s: 8px;
+  --ns-radius-m: 10px;
+  --ns-radius-l: 14px;
+}
+
+
+/* ════════════════════════════════════════════════
+   ROOT — single type family, everywhere
+   ════════════════════════════════════════════════ */
+
+.d-root {
+  min-height: 100vh;
+  overflow-anchor: none;
+  background: var(--ns-paper);
+  color: var(--ns-text);
+
+  font-family:
+    "IBM Plex Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.d-container {
+  width: 100%;
+  max-width: 1180px;
+
+  margin: 0 auto;
+
+  padding: 3.25rem 2.2rem 2.5rem;
+  box-sizing: border-box;
+}
+
+h1, h2, h3 {
+  font-family: inherit;
+  letter-spacing: -0.015em;
+}
+
+
+/* ════════════════════════════════════════════════
+   HERO
+   ════════════════════════════════════════════════ */
+
+.d-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  flex-wrap: wrap;
+  gap: 1.2rem;
+
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.5rem;
+
+  border-bottom: 1px solid var(--ns-hairline);
+}
+
+.d-hero-left {
+  min-width: 0;
+}
+
+.d-hero-title {
+  font-size: clamp(1.5rem, 2.2vw, 1.85rem);
+  font-weight: 600;
+
+  margin: 0 0 0.4rem;
+  line-height: 1.2;
+  color: var(--ns-text);
+}
+
+.d-hero-name {
+  color: var(--ns-text);
+  font-weight: 700;
+}
+
+.d-hero-sub {
+  margin: 0;
+
+  color: var(--ns-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.d-hero-right {
+  display: flex;
+  gap: 0.5rem;
+
+  flex-wrap: wrap;
+}
+
+.d-target-pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  background: #fff;
+  border: 1px solid var(--ns-hairline);
+
+  border-radius: var(--ns-radius-s);
+
+  padding: 7px 12px;
+
+  font-size: 12.5px;
+  color: var(--ns-muted);
+
+  white-space: nowrap;
+}
+
+.d-target-pill strong {
+  color: var(--ns-text);
+  font-weight: 600;
+}
+
+.d-pulse {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: var(--ns-accent);
+
+  flex-shrink: 0;
+  /* motion removed for a calmer, professional feel */
+}
+
+
+/* ════════════════════════════════════════════════
+   MAIN GRID
+   ════════════════════════════════════════════════ */
+
+.d-main-grid {
+  display: grid;
+
+  grid-template-columns: 1.4fr 1fr;
+
+  gap: 1rem;
+
+  margin-bottom: 2rem;
+}
+
+
+/* ════════════════════════════════════════════════
+   COMMON CARD
+   ════════════════════════════════════════════════ */
+
+.d-card {
+  background: #fff;
+
+  border: 1px solid var(--ns-hairline);
+  border-radius: var(--ns-radius-l);
+
+  padding: 1.4rem 1.5rem;
+
+  box-sizing: border-box;
+}
+
+.d-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 1rem;
+
+  margin-bottom: 1.1rem;
+}
+
+.d-card-title {
+  font-size: 15px;
+  font-weight: 600;
+
+  margin: 0;
+  color: var(--ns-text);
+}
+
+.d-badge {
+  font-family: inherit;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  letter-spacing: 0.02em;
+
+  color: var(--ns-accent);
+  background: var(--ns-accent-dim);
+
+  padding: 4px 10px;
+
+  border-radius: var(--ns-radius-s);
+
+  white-space: nowrap;
+}
+
+
+/* ════════════════════════════════════════════════
+   PROGRESS TRACK
+   ════════════════════════════════════════════════ */
+
+.d-progress-bar {
+  position: relative;
+
+  height: 5px;
+
+  background: var(--ns-paper-dim);
+
+  border-radius: 99px;
+
+  margin-bottom: 1.3rem;
+}
+
+.d-progress-fill {
+  height: 100%;
+
+  background: var(--ns-accent);
+
+  border-radius: 99px;
+
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.d-progress-ticks {
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.d-progress-tick {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  border: 2px solid var(--ns-hairline);
+
+  transition: border-color 0.2s ease, background 0.2s ease;
+
+  box-sizing: border-box;
+}
+
+.d-progress-tick--done {
+  border-color: var(--ns-accent);
+  background: var(--ns-accent);
+}
+
+
+/* ════════════════════════════════════════════════
+   CHECKLIST
+   ════════════════════════════════════════════════ */
+
+.d-checklist {
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+}
+
+.d-checklist::before {
+  content: "";
+
+  position: absolute;
+
+  left: 13.5px;
+
+  top: 8px;
+  bottom: 8px;
+
+  width: 1px;
+
+  background: var(--ns-hairline);
+
+  z-index: 0;
+}
+
+.d-checklist-item {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 0.55rem 0.5rem;
+
+  border-radius: var(--ns-radius-m);
+
+  text-decoration: none;
+  color: inherit;
+
+  transition: background 0.15s ease;
+}
+
+.d-checklist-item:hover {
+  background: var(--ns-paper-dim);
+}
+
+.d-checklist-node {
+  width: 26px;
+  height: 26px;
+
+  border-radius: 50%;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fff;
+
+  border: 1.5px solid var(--ns-hairline);
+
+  font-size: 11px;
+  font-weight: 600;
+
+  color: var(--ns-muted-lt);
+
+  box-sizing: border-box;
+
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.d-checklist-item--done .d-checklist-node {
+  background: var(--ns-accent);
+
+  border-color: var(--ns-accent);
+
+  color: #fff;
+}
+
+.d-checklist-text {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.d-checklist-text h4 {
+  font-size: 13.5px;
+  font-weight: 600;
+
+  margin: 0 0 2px;
+
+  line-height: 1.35;
+}
+
+.d-checklist-text p {
+  font-size: 12px;
+
+  color: var(--ns-muted);
+
+  line-height: 1.4;
+
+  margin: 0;
+}
+
+.d-checklist-arrow {
+  color: var(--ns-muted-lt);
+
+  flex-shrink: 0;
+
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.d-checklist-item:hover .d-checklist-arrow {
+  transform: translateX(3px);
+
+  color: var(--ns-accent);
+}
+
+
+/* ════════════════════════════════════════════════
+   ACTIVITY
+   ════════════════════════════════════════════════ */
+
+.d-activity-list {
+  list-style: none;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 0;
+  margin: 0;
+}
+
+.d-activity-item {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0.6rem 0.25rem;
+
+  border-bottom: 1px solid var(--ns-paper-dim);
+}
+
+.d-activity-item:last-child {
+  border-bottom: none;
+}
+
+.d-activity-dot {
+  width: 22px;
+  height: 22px;
+
+  border-radius: 50%;
+
+  background: var(--ns-accent-dim);
+  color: var(--ns-accent);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+}
+
+.d-activity-body {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.d-activity-label {
+  font-size: 13px;
+  font-weight: 500;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  display: block;
+}
+
+.d-activity-date {
+  font-size: 11px;
+
+  color: var(--ns-muted-lt);
+
+  flex-shrink: 0;
+}
+
+
+/* ════════════════════════════════════════════════
+   ACTIVITY LOADING
+   ════════════════════════════════════════════════ */
+
+.d-activity-loading {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.d-skeleton {
+  height: 36px;
+
+  border-radius: var(--ns-radius-s);
+
+  background: linear-gradient(
+    90deg,
+    var(--ns-paper-dim) 25%,
+    #e2e8f0 37%,
+    var(--ns-paper-dim) 63%
+  );
+
+  background-size: 400% 100%;
+
+  animation: d-shimmer 1.4s ease infinite;
+}
+
+.d-skeleton--short {
+  width: 70%;
+}
+
+@keyframes d-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+
+/* ════════════════════════════════════════════════
+   ACTIVITY EMPTY
+   ════════════════════════════════════════════════ */
+
+.d-activity-empty {
+  text-align: center;
+
+  padding: 1.6rem 1rem;
+
+  color: var(--ns-muted);
+}
+
+.d-empty-icon {
+  color: var(--ns-muted-lt);
+
+  margin-bottom: 0.5rem;
+}
+
+.d-activity-empty p {
+  font-size: 13px;
+
+  margin: 0 0 0.9rem;
+}
+
+.d-empty-btn {
+  display: inline-block;
+
+  font-size: 12.5px;
+  font-weight: 600;
+
+  color: var(--ns-accent);
+
+  text-decoration: none;
+
+  border: 1px solid var(--ns-accent);
+
+  border-radius: var(--ns-radius-s);
+
+  padding: 6px 14px;
+
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.d-empty-btn:hover {
+  background: var(--ns-accent);
+
+  color: #fff;
+}
+
+
+/* ════════════════════════════════════════════════
+   WORKSPACES
+   ════════════════════════════════════════════════ */
+
+.d-workspaces {
+  width: 100%;
+}
+
+.d-section-header {
+  margin-bottom: 1.1rem;
+}
+
+.d-section-title {
+  font-size: 16px;
+
+  font-weight: 600;
+
+  margin: 0 0 0.2rem;
+}
+
+.d-section-sub {
+  font-size: 13px;
+
+  color: var(--ns-muted);
+
+  margin: 0;
+}
+
+.d-workspace-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 1rem;
+}
+
+
+/* ════════════════════════════════════════════════
+   WORKSPACE CARD — quieter accent treatment:
+   the colored top strip is gone; the icon chip
+   is the only spot of color per card.
+   ════════════════════════════════════════════════ */
+
+.d-workspace-card {
+  display: flex;
+
+  flex-direction: column;
+
+  background: #fff;
+
+  border: 1px solid var(--ns-hairline);
+
+  border-radius: var(--ns-radius-l);
+
+  padding: 1.3rem 1.4rem 1.2rem;
+
+  text-decoration: none;
+  color: inherit;
+
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.d-workspace-card:hover {
+  border-color: var(--ns-muted-lt);
+  transform: translateY(-2px);
+
+  box-shadow: 0 8px 20px -10px rgba(15, 23, 42, 0.14);
+}
+
+.d-workspace-card--blue { --card-accent: var(--ns-blue); }
+.d-workspace-card--violet { --card-accent: var(--ns-violet); }
+.d-workspace-card--green { --card-accent: var(--ns-green); }
+
+
+/* ════════════════════════════════════════════════
+   WORKSPACE TOP
+   ════════════════════════════════════════════════ */
+
+.d-workspace-top {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 0.9rem;
+}
+
+.d-workspace-step {
+  font-size: 11px;
+  font-weight: 600;
+
+  letter-spacing: 0.04em;
+
+  text-transform: uppercase;
+
+  color: var(--ns-muted-lt);
+}
+
+.d-workspace-icon {
+  width: 32px;
+  height: 32px;
+
+  border-radius: var(--ns-radius-s);
+
+  background: color-mix(in srgb, var(--card-accent, var(--ns-accent)) 12%, white);
+
+  color: var(--card-accent, var(--ns-accent));
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* ════════════════════════════════════════════════
+   WORKSPACE BODY
+   ════════════════════════════════════════════════ */
+
+.d-workspace-body {
+  flex: 1;
+
+  margin-bottom: 0.9rem;
+}
+
+.d-workspace-title {
+  font-size: 15.5px;
+
+  font-weight: 600;
+
+  margin: 0 0 0.4rem;
+
+  line-height: 1.3;
+  color: var(--ns-text);
+}
+
+.d-workspace-desc {
+  font-size: 12.5px;
+
+  line-height: 1.55;
+
+  color: var(--ns-muted);
+
+  margin: 0;
+}
+
+
+/* ════════════════════════════════════════════════
+   WORKSPACE FOOTER
+   ════════════════════════════════════════════════ */
+
+.d-workspace-footer {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding-top: 0.8rem;
+
+  border-top: 1px solid var(--ns-paper-dim);
+}
+
+.d-workspace-cta {
+  font-size: 12.5px;
+
+  font-weight: 600;
+
+  color: var(--ns-text);
+}
+
+.d-workspace-arrow {
+  color: var(--ns-text);
+
+  transition: transform 0.15s ease;
+}
+
+.d-workspace-card:hover .d-workspace-arrow {
+  transform: translateX(3px);
+}
+
+.d-workspace-card:hover .d-workspace-cta,
+.d-workspace-card:hover .d-workspace-arrow {
+  color: var(--card-accent, var(--ns-accent));
+}
+
+
+/* ════════════════════════════════════════════════
+   RESPONSIVE — TABLET
+   ════════════════════════════════════════════════ */
+
+@media (max-width: 980px) {
+  .d-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .d-workspace-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+
+/* ════════════════════════════════════════════════
+   RESPONSIVE — SMALL TABLET
+   ════════════════════════════════════════════════ */
+
+@media (max-width: 760px) {
+  .d-container {
+    padding: 1.4rem 1.4rem 2.2rem;
+  }
+
+  .d-hero {
+    align-items: flex-start;
+  }
+
+  .d-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ════════════════════════════════════════════════
+   RESPONSIVE — MOBILE
+   ════════════════════════════════════════════════ */
+
+@media (max-width: 600px) {
+  .d-container {
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .d-hero {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 0.9rem;
+
+    margin-bottom: 1.2rem;
+
+    padding-bottom: 1rem;
+  }
+
+  .d-hero-title {
+    font-size: 1.4rem;
+  }
+
+  .d-hero-sub {
+    font-size: 13px;
+  }
+
+  .d-hero-right {
+    width: 100%;
+  }
+
+  .d-target-pill {
+    font-size: 11.5px;
+
+    padding: 6px 10px;
+  }
+
+  .d-card {
+    border-radius: 12px;
+
+    padding: 1.1rem 1rem 1.15rem;
+  }
+
+  .d-card-header {
+    margin-bottom: 0.9rem;
+  }
+
+  .d-card-title {
+    font-size: 14.5px;
+  }
+
+  .d-checklist-item {
+    gap: 9px;
+
+    padding: 0.45rem 0.25rem;
+  }
+
+  .d-checklist-node {
+    width: 25px;
+    height: 25px;
+  }
+
+  .d-checklist-text h4 {
+    font-size: 13px;
+  }
+
+  .d-checklist-text p {
+    font-size: 11.5px;
+  }
+
+  .d-activity-label {
+    font-size: 12.5px;
+  }
+
+  .d-activity-date {
+    font-size: 10px;
+  }
+
+  .d-workspace-card {
+    padding: 1.1rem 1.1rem 1rem;
+  }
+}
+
+
+/* ════════════════════════════════════════════════
+   VERY SMALL MOBILE
+   ════════════════════════════════════════════════ */
+
+@media (max-width: 400px) {
+  .d-container {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .d-hero-title {
+    font-size: 1.3rem;
+  }
+
+  .d-target-pill {
+    max-width: 100%;
+
+    white-space: normal;
+  }
+
+  .d-card {
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
+  }
+
+  .d-checklist-text p {
+    display: none;
+  }
+}
+
+
+/* ════════════════════════════════════════════════
+   ACCESSIBILITY
+   ════════════════════════════════════════════════ */
+
+.d-checklist-item:focus-visible,
+.d-workspace-card:focus-visible,
+.d-empty-btn:focus-visible {
+  outline: 2px solid var(--ns-accent);
+
+  outline-offset: 3px;
+}
+
+
+/* ════════════════════════════════════════════════
+   REDUCED MOTION
+   ════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
