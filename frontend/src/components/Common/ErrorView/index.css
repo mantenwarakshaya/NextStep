@@ -1,0 +1,22 @@
+.error-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.error-text {
+  color: #475569;
+  font-size: 18px;
+}
+
+.retry-btn {
+  background-color: #2a4fcb;
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+}

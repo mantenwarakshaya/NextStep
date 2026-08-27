@@ -1,0 +1,22 @@
+.empty-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.empty-text {
+  color: #475569;
+  font-size: 18px;
+}
+
+.empty-btn {
+  background-color: #2a4fcb;
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+}
