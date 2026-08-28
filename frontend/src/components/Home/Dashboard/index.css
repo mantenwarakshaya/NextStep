@@ -423,6 +423,13 @@ h3 {
   margin: 0;
 }
 
+.d-activity-empty-view {
+  height: auto;
+  min-height: 180px;
+  padding: 1.6rem 1rem;
+  box-sizing: border-box;
+}
+
 .d-activity-item {
   display: flex;
   align-items: center;

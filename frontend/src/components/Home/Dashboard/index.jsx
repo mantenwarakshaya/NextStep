@@ -244,6 +244,7 @@ export default function Dashboard() {
               <EmptyView
                 message="No recent activity yet."
                 actionText="Go to Semester Plan"
+                className="d-activity-empty-view"
                 onAction={() => (window.location.href = "/semester-roadmap")}
               />
             ) : (
