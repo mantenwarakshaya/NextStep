@@ -34,7 +34,6 @@
   --ns-radius-l: 14px;
 }
 
-
 /* ════════════════════════════════════════════════
    ROOT — single type family, everywhere
    ════════════════════════════════════════════════ */
@@ -65,11 +64,12 @@
   box-sizing: border-box;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: inherit;
   letter-spacing: -0.015em;
 }
-
 
 /* ════════════════════════════════════════════════
    HERO
@@ -157,7 +157,6 @@ h1, h2, h3 {
   /* motion removed for a calmer, professional feel */
 }
 
-
 /* ════════════════════════════════════════════════
    MAIN GRID
    ════════════════════════════════════════════════ */
@@ -171,7 +170,6 @@ h1, h2, h3 {
 
   margin-bottom: 2rem;
 }
-
 
 /* ════════════════════════════════════════════════
    COMMON CARD
@@ -224,7 +222,6 @@ h1, h2, h3 {
   white-space: nowrap;
 }
 
-
 /* ════════════════════════════════════════════════
    PROGRESS TRACK
    ════════════════════════════════════════════════ */
@@ -271,7 +268,9 @@ h1, h2, h3 {
 
   border: 2px solid var(--ns-hairline);
 
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 
   box-sizing: border-box;
 }
@@ -280,7 +279,6 @@ h1, h2, h3 {
   border-color: var(--ns-accent);
   background: var(--ns-accent);
 }
-
 
 /* ════════════════════════════════════════════════
    CHECKLIST
@@ -356,7 +354,10 @@ h1, h2, h3 {
 
   box-sizing: border-box;
 
-  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .d-checklist-item--done .d-checklist-node {
@@ -397,7 +398,9 @@ h1, h2, h3 {
 
   flex-shrink: 0;
 
-  transition: transform 0.15s ease, color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease;
 }
 
 .d-checklist-item:hover .d-checklist-arrow {
@@ -405,7 +408,6 @@ h1, h2, h3 {
 
   color: var(--ns-accent);
 }
-
 
 /* ════════════════════════════════════════════════
    ACTIVITY
@@ -477,7 +479,6 @@ h1, h2, h3 {
   flex-shrink: 0;
 }
 
-
 /* ════════════════════════════════════════════════
    ACTIVITY LOADING
    ════════════════════════════════════════════════ */
@@ -512,10 +513,13 @@ h1, h2, h3 {
 }
 
 @keyframes d-shimmer {
-  0% { background-position: 100% 50%; }
-  100% { background-position: 0 50%; }
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
 }
-
 
 /* ════════════════════════════════════════════════
    ACTIVITY EMPTY
@@ -557,7 +561,9 @@ h1, h2, h3 {
 
   padding: 6px 14px;
 
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
 .d-empty-btn:hover {
@@ -565,7 +571,6 @@ h1, h2, h3 {
 
   color: #fff;
 }
-
 
 /* ════════════════════════════════════════════════
    WORKSPACES
@@ -603,7 +608,6 @@ h1, h2, h3 {
   gap: 1rem;
 }
 
-
 /* ════════════════════════════════════════════════
    WORKSPACE CARD — quieter accent treatment:
    the colored top strip is gone; the icon chip
@@ -626,7 +630,10 @@ h1, h2, h3 {
   text-decoration: none;
   color: inherit;
 
-  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
 }
 
 .d-workspace-card:hover {
@@ -636,10 +643,15 @@ h1, h2, h3 {
   box-shadow: 0 8px 20px -10px rgba(15, 23, 42, 0.14);
 }
 
-.d-workspace-card--blue { --card-accent: var(--ns-blue); }
-.d-workspace-card--violet { --card-accent: var(--ns-violet); }
-.d-workspace-card--green { --card-accent: var(--ns-green); }
-
+.d-workspace-card--blue {
+  --card-accent: var(--ns-blue);
+}
+.d-workspace-card--violet {
+  --card-accent: var(--ns-violet);
+}
+.d-workspace-card--green {
+  --card-accent: var(--ns-green);
+}
 
 /* ════════════════════════════════════════════════
    WORKSPACE TOP
@@ -671,7 +683,11 @@ h1, h2, h3 {
 
   border-radius: var(--ns-radius-s);
 
-  background: color-mix(in srgb, var(--card-accent, var(--ns-accent)) 12%, white);
+  background: color-mix(
+    in srgb,
+    var(--card-accent, var(--ns-accent)) 12%,
+    white
+  );
 
   color: var(--card-accent, var(--ns-accent));
 
@@ -680,7 +696,6 @@ h1, h2, h3 {
   align-items: center;
   justify-content: center;
 }
-
 
 /* ════════════════════════════════════════════════
    WORKSPACE BODY
@@ -712,7 +727,6 @@ h1, h2, h3 {
 
   margin: 0;
 }
-
 
 /* ════════════════════════════════════════════════
    WORKSPACE FOOTER
@@ -753,7 +767,6 @@ h1, h2, h3 {
   color: var(--card-accent, var(--ns-accent));
 }
 
-
 /* ════════════════════════════════════════════════
    RESPONSIVE — TABLET
    ════════════════════════════════════════════════ */
@@ -767,7 +780,6 @@ h1, h2, h3 {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-
 
 /* ════════════════════════════════════════════════
    RESPONSIVE — SMALL TABLET
@@ -786,7 +798,6 @@ h1, h2, h3 {
     grid-template-columns: 1fr;
   }
 }
-
 
 /* ════════════════════════════════════════════════
    RESPONSIVE — MOBILE
@@ -873,7 +884,6 @@ h1, h2, h3 {
   }
 }
 
-
 /* ════════════════════════════════════════════════
    VERY SMALL MOBILE
    ════════════════════════════════════════════════ */
@@ -904,7 +914,6 @@ h1, h2, h3 {
   }
 }
 
-
 /* ════════════════════════════════════════════════
    ACCESSIBILITY
    ════════════════════════════════════════════════ */
@@ -916,7 +925,6 @@ h1, h2, h3 {
 
   outline-offset: 3px;
 }
-
 
 /* ════════════════════════════════════════════════
    REDUCED MOTION

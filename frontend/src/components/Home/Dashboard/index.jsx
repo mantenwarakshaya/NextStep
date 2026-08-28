@@ -65,10 +65,7 @@ export default function Dashboard() {
   const currentSemester = user?.currentSemester || 1;
   const totalSemesters = 8;
 
-  const semesterPct = Math.min(
-    (currentSemester / totalSemesters) * 100,
-    100
-  );
+  const semesterPct = Math.min((currentSemester / totalSemesters) * 100, 100);
 
   const fetchActivity = useCallback(async () => {
     const curriculumItems = Array.isArray(user?.curriculum)
@@ -91,13 +88,11 @@ export default function Dashboard() {
   return (
     <div className="d-root">
       <div className="d-container">
-
         {/* ═══════════════════════════════════════════════
             HERO
         ═══════════════════════════════════════════════ */}
 
         <header className="d-hero">
-
           <div className="d-hero-left">
             <h1 className="d-hero-title">
               Welcome back,{" "}
@@ -107,71 +102,51 @@ export default function Dashboard() {
             </h1>
 
             <p className="d-hero-sub">
-              Build your academic path, choose your career goal,
-              and follow your personalized roadmap.
+              Build your academic path, choose your career goal, and follow your
+              personalized roadmap.
             </p>
           </div>
 
           <div className="d-hero-right">
-
             <div className="d-target-pill">
-              <span
-                className="d-pulse"
-                aria-hidden="true"
-              />
+              <span className="d-pulse" aria-hidden="true" />
 
               <Target size={13} />
 
               <span>
-                Goal:{" "}
-                <strong>
-                  {user?.careerGoal || "Not set"}
-                </strong>
+                Goal: <strong>{user?.careerGoal || "Not set"}</strong>
               </span>
             </div>
 
             <div className="d-target-pill">
               <BookOpen size={13} />
 
-              <span>
-                {user?.branch || "Branch not set"}
-              </span>
+              <span>{user?.branch || "Branch not set"}</span>
             </div>
-
           </div>
-
         </header>
-
 
         {/* ═══════════════════════════════════════════════
             MAIN GRID
         ═══════════════════════════════════════════════ */}
 
         <div className="d-main-grid">
-
           {/* ─────────────────────────────────────────────
               SEMESTER PROGRESS
           ───────────────────────────────────────────── */}
 
           <section className="d-card d-checklist-card">
-
             <div className="d-card-header">
-
-              <h2 className="d-card-title">
-                Semester Progress
-              </h2>
+              <h2 className="d-card-title">Semester Progress</h2>
 
               <span className="d-badge">
                 Semester {currentSemester}/{totalSemesters}
               </span>
-
             </div>
-
 
             {/* Progress Bar */}
 
             <div className="d-progress-bar">
-
               <div
                 className="d-progress-fill"
                 style={{
@@ -179,31 +154,23 @@ export default function Dashboard() {
                 }}
               />
 
-              <div
-                className="d-progress-ticks"
-                aria-hidden="true"
-              >
+              <div className="d-progress-ticks" aria-hidden="true">
                 {Array.from({
                   length: totalSemesters,
                 }).map((_, i) => (
                   <span
                     key={i}
                     className={`d-progress-tick ${
-                      i < currentSemester
-                        ? "d-progress-tick--done"
-                        : ""
+                      i < currentSemester ? "d-progress-tick--done" : ""
                     }`}
                   />
                 ))}
               </div>
-
             </div>
-
 
             {/* Checklist */}
 
             <div className="d-checklist">
-
               {[
                 {
                   to: "/branches",
@@ -229,62 +196,35 @@ export default function Dashboard() {
                   title: "Follow your roadmap",
                   sub: "Get your personalized semester-wise learning plan.",
                 },
-              ].map(
-                ({
-                  to,
-                  done,
-                  title,
-                  sub,
-                }, i) => (
+              ].map(({ to, done, title, sub }, i) => (
+                <Link
+                  key={title}
+                  to={to}
+                  className={`d-checklist-item ${
+                    done ? "d-checklist-item--done" : ""
+                  }`}
+                >
+                  <span className="d-checklist-node">{done ? "✓" : i + 1}</span>
 
-                  <Link
-                    key={title}
-                    to={to}
-                    className={`d-checklist-item ${
-                      done
-                        ? "d-checklist-item--done"
-                        : ""
-                    }`}
-                  >
+                  <div className="d-checklist-text">
+                    <h4>{title}</h4>
 
-                    <span className="d-checklist-node">
-                      {done ? "✓" : i + 1}
-                    </span>
+                    <p>{sub}</p>
+                  </div>
 
-                    <div className="d-checklist-text">
-
-                      <h4>{title}</h4>
-
-                      <p>{sub}</p>
-
-                    </div>
-
-                    <ArrowRight
-                      size={13}
-                      className="d-checklist-arrow"
-                    />
-
-                  </Link>
-
-                )
-              )}
-
+                  <ArrowRight size={13} className="d-checklist-arrow" />
+                </Link>
+              ))}
             </div>
-
           </section>
-
 
           {/* ─────────────────────────────────────────────
               RECENT ACTIVITY
           ───────────────────────────────────────────── */}
 
           <section className="d-card d-activity-card">
-
             <div className="d-card-header">
-
-              <h2 className="d-card-title">
-                Recent Activity
-              </h2>
+              <h2 className="d-card-title">Recent Activity</h2>
 
               {activity.length > 0 && (
                 <span className="d-badge">
@@ -292,179 +232,97 @@ export default function Dashboard() {
                   {activity.length > 1 ? "s" : ""}
                 </span>
               )}
-
             </div>
-
 
             {/* Loading */}
 
             {actLoading ? (
-
               <div className="d-activity-loading">
-
                 <div className="d-skeleton" />
 
                 <div className="d-skeleton d-skeleton--short" />
-
               </div>
-
             ) : activity.length === 0 ? (
-
               /* Empty State */
 
               <div className="d-activity-empty">
+                <Clock size={22} className="d-empty-icon" />
 
-                <Clock
-                  size={22}
-                  className="d-empty-icon"
-                />
+                <p>No recent activity yet</p>
 
-                <p>
-                  No recent activity yet
-                </p>
-
-                <Link
-                  to="/semester-roadmap"
-                  className="d-empty-btn"
-                >
+                <Link to="/semester-roadmap" className="d-empty-btn">
                   Go to Semester Plan
                 </Link>
-
               </div>
-
             ) : (
-
               /* Activity List */
 
               <ul className="d-activity-list">
-
                 {activity.map((item) => (
-
-                  <li
-                    key={item.id}
-                    className="d-activity-item"
-                  >
-
+                  <li key={item.id} className="d-activity-item">
                     <span className="d-activity-dot">
                       <BarChart2 size={11} />
                     </span>
 
                     <div className="d-activity-body">
-
-                      <span className="d-activity-label">
-                        {item.label}
-                      </span>
-
+                      <span className="d-activity-label">{item.label}</span>
                     </div>
 
-                    <span className="d-activity-date">
-                      {item.date}
-                    </span>
-
+                    <span className="d-activity-date">{item.date}</span>
                   </li>
-
                 ))}
-
               </ul>
-
             )}
-
           </section>
-
         </div>
-
 
         {/* ═══════════════════════════════════════════════
             QUICK WORKSPACES
         ═══════════════════════════════════════════════ */}
 
         <section className="d-workspaces">
-
           <div className="d-section-header">
+            <h2 className="d-section-title">Quick Workspaces</h2>
 
-            <h2 className="d-section-title">
-              Quick Workspaces
-            </h2>
-
-            <p className="d-section-sub">
-              Jump directly into any tool
-            </p>
-
+            <p className="d-section-sub">Jump directly into any tool</p>
           </div>
-
 
           <div className="d-workspace-grid">
+            {workspaces.map(({ path, step, title, desc, accent, Icon }) => (
+              <Link
+                key={path}
+                to={path}
+                className={`d-workspace-card d-workspace-card--${accent}`}
+              >
+                {/* Top */}
 
-            {workspaces.map(
-              ({
-                path,
-                step,
-                title,
-                desc,
-                accent,
-                Icon,
-              }) => (
+                <div className="d-workspace-top">
+                  <span className="d-workspace-step">Step {step}</span>
 
-                <Link
-                  key={path}
-                  to={path}
-                  className={`d-workspace-card d-workspace-card--${accent}`}
-                >
-
-                  {/* Top */}
-
-                  <div className="d-workspace-top">
-
-                    <span className="d-workspace-step">
-                      Step {step}
-                    </span>
-
-                    <div className="d-workspace-icon">
-                      <Icon size={17} />
-                    </div>
-
+                  <div className="d-workspace-icon">
+                    <Icon size={17} />
                   </div>
+                </div>
 
+                {/* Body */}
 
-                  {/* Body */}
+                <div className="d-workspace-body">
+                  <h3 className="d-workspace-title">{title}</h3>
 
-                  <div className="d-workspace-body">
+                  <p className="d-workspace-desc">{desc}</p>
+                </div>
 
-                    <h3 className="d-workspace-title">
-                      {title}
-                    </h3>
+                {/* Footer */}
 
-                    <p className="d-workspace-desc">
-                      {desc}
-                    </p>
+                <div className="d-workspace-footer">
+                  <span className="d-workspace-cta">Launch</span>
 
-                  </div>
-
-
-                  {/* Footer */}
-
-                  <div className="d-workspace-footer">
-
-                    <span className="d-workspace-cta">
-                      Launch
-                    </span>
-
-                    <ArrowRight
-                      size={13}
-                      className="d-workspace-arrow"
-                    />
-
-                  </div>
-
-                </Link>
-
-              )
-            )}
-
+                  <ArrowRight size={13} className="d-workspace-arrow" />
+                </div>
+              </Link>
+            ))}
           </div>
-
         </section>
-
       </div>
     </div>
   );

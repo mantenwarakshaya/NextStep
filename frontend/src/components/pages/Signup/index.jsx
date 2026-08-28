@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import {
-  Eye,
-  EyeOff,
-  Lock,
-  Mail,
-  User,
-} from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import "./index.css";
 
 const API_BASE_URL =
@@ -15,11 +9,8 @@ const API_BASE_URL =
 
 const getApiErrorMessage = (
   err,
-  fallback = "Something went wrong. Please try again."
-) =>
-  err?.response?.data?.message ||
-  err?.message ||
-  fallback;
+  fallback = "Something went wrong. Please try again.",
+) => err?.response?.data?.message || err?.message || fallback;
 
 export default function Signup({ onSignupSuccess }) {
   const navigate = useNavigate();
@@ -58,13 +49,9 @@ export default function Signup({ onSignupSuccess }) {
         password: formData.password,
       };
 
-      const response = await axios.post(
-        `${API_BASE_URL}/api/signup`,
-        payload,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.post(`${API_BASE_URL}/api/signup`, payload, {
+        withCredentials: true,
+      });
 
       if (response.data?.user) {
         await onSignupSuccess?.();
@@ -79,17 +66,11 @@ export default function Signup({ onSignupSuccess }) {
       navigate("/login", {
         replace: true,
         state: {
-          message:
-            "Account created successfully. Please sign in.",
+          message: "Account created successfully. Please sign in.",
         },
       });
     } catch (err) {
-      setErrorMsg(
-        getApiErrorMessage(
-          err,
-          "Signup failed. Please try again."
-        )
-      );
+      setErrorMsg(getApiErrorMessage(err, "Signup failed. Please try again."));
     } finally {
       setIsLoading(false);
     }
@@ -97,27 +78,19 @@ export default function Signup({ onSignupSuccess }) {
 
   return (
     <div className="signup-page">
-
       {/* ================= LEFT SIDE ================= */}
 
       <aside className="signup-left">
         <div className="signup-left-content">
+          <span className="signup-tag">NextStep</span>
 
-          <span className="signup-tag">
-            NextStep
-          </span>
-
-          <h1>
-            A 4-year roadmap built around your goal.
-          </h1>
+          <h1>A 4-year roadmap built around your goal.</h1>
 
           <p>
-            Create your account first. After you sign in,
-            we'll help you choose your branch and career
-            goal, then generate a personalized roadmap for
-            your journey.
+            Create your account first. After you sign in, we'll help you choose
+            your branch and career goal, then generate a personalized roadmap
+            for your journey.
           </p>
-
         </div>
 
         <div className="signup-left-bg-glow" />
@@ -126,58 +99,32 @@ export default function Signup({ onSignupSuccess }) {
       {/* ================= RIGHT SIDE ================= */}
 
       <main className="signup-right">
-
         <div className="signup-card-container">
-
-          <form
-            onSubmit={handleSignup}
-            className="signup-card"
-          >
-
+          <form onSubmit={handleSignup} className="signup-card">
             {/* HEADER */}
 
             <div className="signup-header">
-
-              <div className="logo-circle">
-                N
-              </div>
+              <div className="logo-circle">N</div>
 
               <div className="signup-header-content">
+                <h2>Create Account</h2>
 
-                <h2>
-                  Create Account
-                </h2>
-
-                <p>
-                  Just a name, email, and password to get started.
-                </p>
-
+                <p>Just a name, email, and password to get started.</p>
               </div>
-
             </div>
 
             {/* ERROR */}
 
-            {errorMsg && (
-              <div className="auth-alert error-box">
-                {errorMsg}
-              </div>
-            )}
+            {errorMsg && <div className="auth-alert error-box">{errorMsg}</div>}
 
             {/* FORM */}
 
             <div className="form-fields">
-
               {/* FIRST NAME */}
 
               <Field
                 id="firstName"
-                icon={
-                  <User
-                    size={18}
-                    className="input-icon"
-                  />
-                }
+                icon={<User size={18} className="input-icon" />}
                 label="First Name"
                 name="firstName"
                 value={formData.firstName}
@@ -192,12 +139,7 @@ export default function Signup({ onSignupSuccess }) {
 
               <Field
                 id="emailId"
-                icon={
-                  <Mail
-                    size={18}
-                    className="input-icon"
-                  />
-                }
+                icon={<Mail size={18} className="input-icon" />}
                 label="Email Address"
                 name="emailId"
                 type="email"
@@ -212,25 +154,14 @@ export default function Signup({ onSignupSuccess }) {
               {/* PASSWORD */}
 
               <div className="form-group">
-
-                <label htmlFor="password">
-                  Password
-                </label>
+                <label htmlFor="password">Password</label>
 
                 <div className="input-box">
-
-                  <Lock
-                    size={18}
-                    className="input-icon"
-                  />
+                  <Lock size={18} className="input-icon" />
 
                   <input
                     id="password"
-                    type={
-                      showPassword
-                        ? "text"
-                        : "password"
-                    }
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
@@ -243,37 +174,20 @@ export default function Signup({ onSignupSuccess }) {
                   <button
                     type="button"
                     className="eye-btn"
-                    onClick={() =>
-                      setShowPassword(
-                        !showPassword
-                      )
-                    }
+                    onClick={() => setShowPassword(!showPassword)}
                     aria-label={
-                      showPassword
-                        ? "Hide password"
-                        : "Show password"
+                      showPassword ? "Hide password" : "Show password"
                     }
                   >
-                    {showPassword ? (
-                      <EyeOff size={18} />
-                    ) : (
-                      <Eye size={18} />
-                    )}
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
-
                 </div>
-
               </div>
-
             </div>
 
             {/* CREATE ACCOUNT */}
 
-            <button
-              type="submit"
-              className="signup-btn"
-              disabled={isLoading}
-            >
+            <button type="submit" className="signup-btn" disabled={isLoading}>
               {isLoading ? (
                 <span className="btn-spinner-content">
                   <span className="spinner-dot" />
@@ -287,53 +201,29 @@ export default function Signup({ onSignupSuccess }) {
             {/* LOGIN */}
 
             <p className="signin-text">
-              Already have an account?{" "}
-              <Link to="/login">
-                Sign In
-              </Link>
+              Already have an account? <Link to="/login">Sign In</Link>
             </p>
-
           </form>
-
         </div>
-
       </main>
-
     </div>
   );
 }
-
 
 /* =====================================================
    REUSABLE INPUT FIELD
 ===================================================== */
 
-function Field({
-  icon,
-  label,
-  id,
-  name,
-  ...props
-}) {
+function Field({ icon, label, id, name, ...props }) {
   return (
     <div className="form-group">
-
-      <label htmlFor={id}>
-        {label}
-      </label>
+      <label htmlFor={id}>{label}</label>
 
       <div className="input-box">
-
         {icon}
 
-        <input
-          id={id}
-          name={name}
-          {...props}
-        />
-
+        <input id={id} name={name} {...props} />
       </div>
-
     </div>
   );
 }

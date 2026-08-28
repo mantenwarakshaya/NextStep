@@ -1,8 +1,12 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { render, screen } from "@testing-library/react";
+import App from "./App";
+import { AuthProvider } from "./AuthProvider";
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+test("renders the NextStep app", () => {
+  render(
+    <AuthProvider>
+      <App />
+    </AuthProvider>,
+  );
+  expect(screen.getByText(/loading nextstep/i)).toBeInTheDocument();
 });

@@ -256,7 +256,7 @@ export default function EditProfile() {
 
             <div className="ep-header-copy">
               <div className="ep-avatar" aria-hidden="true">
-                {initials || <FaUser size={13} />}
+                {initials || <FaUser size={14} />}
               </div>
 
               <div>
@@ -495,19 +495,21 @@ export default function EditProfile() {
 
                   {/* STATUS MESSAGE */}
 
-                  {errorMsg && (
-                    <div className="ep-message ep-message-error">
-                      <FaExclamationTriangle />
-                      <span>{errorMsg}</span>
-                    </div>
-                  )}
+                  <div aria-live="polite">
+                    {errorMsg && (
+                      <div className="ep-message ep-message-error">
+                        <FaExclamationTriangle />
+                        <span>{errorMsg}</span>
+                      </div>
+                    )}
 
-                  {successMsg && (
-                    <div className="ep-message ep-message-success">
-                      <FaCheck />
-                      <span>{successMsg}</span>
-                    </div>
-                  )}
+                    {successMsg && (
+                      <div className="ep-message ep-message-success">
+                        <FaCheck />
+                        <span>{successMsg}</span>
+                      </div>
+                    )}
+                  </div>
 
                   {/* FORM FOOTER */}
 
@@ -575,14 +577,30 @@ export default function EditProfile() {
                   </span>
                 </div>
 
+                <div className="ep-info-row">
+                  <div>
+                    <strong>Password</strong>
+                    <span>
+                      Change your password to keep your account
+                      secure.
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="ep-outline-btn"
+                    disabled
+                  >
+                    Change Password
+                  </button>
+                </div>
+
                 <div className="ep-security-note">
                   <FaLock />
 
                   <p>
-                    Your account credentials are managed
-                    securely. Password management can be
-                    added here when the authentication flow
-                    supports it.
+                    Password management will be available once
+                    the authentication flow supports it.
                   </p>
                 </div>
 
@@ -639,7 +657,7 @@ export default function EditProfile() {
                 </div>
 
                 <p className="ep-danger-disabled">
-                  <FaLock size={9} />
+                  <FaLock size={10} />
                   Account deletion is currently unavailable.
                 </p>
 

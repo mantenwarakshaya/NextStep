@@ -1,821 +1,607 @@
-import {useState, useEffect} from 'react'
+import { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import {
-  BsSearch,
-  BsChevronDown,
-  BsChevronUp,
-  BsArrowRight,
-} from 'react-icons/bs'
-import {FiCpu} from 'react-icons/fi'
-import {
-  MdOutlineElectricBolt,
-  MdOutlineEngineering,
-  MdOutlineApartment,
-  MdScience,
-} from 'react-icons/md'
-import './index.css'
+  X,
+  Search,
+  Code2,
+  Cpu,
+  Wrench,
+  HardHat,
+  Sparkles,
+  CheckCircle2,
+  XCircle,
+  Briefcase,
+  Users,
+  HelpCircle,
+  Map as MapIcon,
+  LayoutGrid,
+  ChevronDown,
+} from "lucide-react";
+import { EmptyView, ErrorView, LoaderView } from "../Common";
+import "./index.css";
 
-// ---------------------------------------------------------------------------
-// Config
-// ---------------------------------------------------------------------------
-
-// Point this to your Express server.
-// Add REACT_APP_API_BASE_URL to your frontend .env when deploying.
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || 'http://localhost:7777'
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:7777";
 
-const BRANCHES_API_URL = `${API_BASE_URL}/api/branches`
+const CATEGORY_ICONS = {
+  "Computer Science & Engineering": Code2,
+  Electronics: Cpu,
+  Mechanical: Wrench,
+  Civil: HardHat,
+  "Other Specialized Branches": Sparkles,
+};
 
-// ---------------------------------------------------------------------------
-// API Status
-// ---------------------------------------------------------------------------
+const LEVEL_SCALE = {
+  Low: 1,
+  "Low to Moderate": 2,
+  Moderate: 3,
+  "Moderate to High": 4,
+  High: 5,
+  "Very High": 6,
+};
+const LEVEL_MAX = 6;
 
-const apiStatusConstants = {
-  initial: 'INITIAL',
-  inProgress: 'IN_PROGRESS',
-  success: 'SUCCESS',
-  failure: 'FAILURE',
-}
+const DETAIL_TABS = [
+  { id: "overview", label: "Overview", icon: LayoutGrid },
+  { id: "roadmap", label: "Year-wise Roadmap", icon: MapIcon },
+  { id: "careers", label: "Careers", icon: Briefcase },
+  { id: "guidance", label: "FAQ & Parents", icon: Users },
+];
 
-// ---------------------------------------------------------------------------
-// Category Taxonomy
-// ---------------------------------------------------------------------------
+export default function BranchesExplorer() {
+  const [branches, setBranches] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [query, setQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [selected, setSelected] = useState(null);
+  const [activeDetailTab, setActiveDetailTab] = useState("overview");
 
-const categoriesList = [
-  {
-    id: 'ALL',
-    label: 'All Branches',
-    icon: null,
-  },
-  {
-    id: 'CSE',
-    label: 'Computer Science & Engineering',
-    icon: FiCpu,
-  },
-  {
-    id: 'ECE',
-    label: 'Electronics',
-    icon: MdOutlineElectricBolt,
-  },
-  {
-    id: 'MECH',
-    label: 'Mechanical',
-    icon: MdOutlineEngineering,
-  },
-  {
-    id: 'CIVIL',
-    label: 'Civil',
-    icon: MdOutlineApartment,
-  },
-  {
-    id: 'OTHER',
-    label: 'Other Specialized',
-    icon: MdScience,
-  },
-]
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        setLoading(true);
+        setErrorMsg("");
+        const res = await axios.get(`${API_BASE_URL}/api/branches`);
+        setBranches(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        setErrorMsg(
+          err.response?.data?.error ||
+            "Could not load branches. Please try again.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBranches();
+  }, []);
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
+  const categories = useMemo(() => {
+    const unique = [
+      ...new Set(branches.map((b) => b.category).filter(Boolean)),
+    ];
+    return ["All", ...unique];
+  }, [branches]);
 
-// Converts MongoDB category names into the IDs used by the frontend.
-const getCategoryId = category => {
-  if (!category) {
-    return 'OTHER'
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return branches.filter((b) => {
+      const matchesCategory =
+        activeCategory === "All" || b.category === activeCategory;
+      const matchesQuery =
+        !q ||
+        b.branch_name?.toLowerCase().includes(q) ||
+        b.aliases?.some((a) => a.toLowerCase().includes(q));
+      return matchesCategory && matchesQuery;
+    });
+  }, [branches, activeCategory, query]);
+
+  // Group results by category so the page reads as a set of branching
+  // trunks (one per category) rather than one undifferentiated grid.
+  const trunks = useMemo(() => {
+    const order = categories.filter((c) => c !== "All");
+    const buckets = {};
+    filtered.forEach((b) => {
+      const cat = b.category || "Other";
+      (buckets[cat] ||= []).push(b);
+    });
+    return order
+      .filter((c) => buckets[c]?.length)
+      .map((c) => ({ category: c, items: buckets[c] }));
+  }, [filtered, categories]);
+
+  const openBranch = (branch) => {
+    setSelected(branch);
+    setActiveDetailTab("overview");
+  };
+
+  if (loading) {
+    return <LoaderView message="Loading branches..." />;
   }
 
-  const normalizedCategory = category.toLowerCase()
-
-  if (
-    normalizedCategory.includes('computer science') ||
-    normalizedCategory.includes('cse')
-  ) {
-    return 'CSE'
+  if (errorMsg) {
+    return (
+      <ErrorView message={errorMsg} onRetry={() => window.location.reload()} />
+    );
   }
-
-  if (
-    normalizedCategory.includes('electronics') ||
-    normalizedCategory.includes('ece')
-  ) {
-    return 'ECE'
-  }
-
-  if (normalizedCategory.includes('mechanical') ||
-    normalizedCategory.includes('mech')) {
-    return 'MECH'
-  }
-
-  if (normalizedCategory.includes('civil')) {
-    return 'CIVIL'
-  }
-
-  return 'OTHER'
-}
-
-// ---------------------------------------------------------------------------
-// MongoDB -> Frontend Data Formatter
-// ---------------------------------------------------------------------------
-
-// MongoDB document:
-//
-// {
-//   _id,
-//   branch_code,
-//   branch_name,
-//   category,
-//   aliases,
-//   about,
-//   core_subjects,
-//   key_skills,
-//   career_opportunities
-// }
-//
-// Frontend expects:
-//
-// {
-//   id,
-//   categoryId,
-//   categoryLabel,
-//   name,
-//   aliases,
-//   about,
-//   coreSubjects,
-//   keySkills,
-//   careers
-// }
-
-const formatBranchItem = branch => ({
-  id: branch._id || branch.id,
-
-  categoryId: getCategoryId(branch.category),
-
-  categoryLabel: branch.category || 'Other Specialized',
-
-  name: branch.branch_name || branch.name || '',
-
-  aliases: Array.isArray(branch.aliases) ? branch.aliases : [],
-
-  about: branch.about || '',
-
-  coreSubjects: Array.isArray(branch.core_subjects)
-    ? branch.core_subjects
-    : Array.isArray(branch.coreSubjects)
-      ? branch.coreSubjects
-      : [],
-
-  keySkills: Array.isArray(branch.key_skills)
-    ? branch.key_skills
-    : Array.isArray(branch.keySkills)
-      ? branch.keySkills
-      : [],
-
-  careers: Array.isArray(branch.career_opportunities)
-    ? branch.career_opportunities
-    : Array.isArray(branch.careers)
-      ? branch.careers
-      : [],
-
-  decisionFactors: branch.decision_factors || {},
-
-  simpleExplanation: branch.simple_explanation || '',
-
-  recommendedLanguages: Array.isArray(branch.recommended_languages)
-    ? branch.recommended_languages
-    : [],
-
-  commonTools: Array.isArray(branch.common_tools)
-    ? branch.common_tools
-    : [],
-
-  practicalWork: Array.isArray(branch.practical_work)
-    ? branch.practical_work
-    : [],
-
-  projectAreas: Array.isArray(branch.project_areas)
-    ? branch.project_areas
-    : [],
-
-  internshipAreas: Array.isArray(branch.internship_areas)
-    ? branch.internship_areas
-    : [],
-
-  higherStudies: Array.isArray(branch.higher_studies)
-    ? branch.higher_studies
-    : [],
-
-  bestFor: Array.isArray(branch.best_for) ? branch.best_for : [],
-
-  mayNotSuit: Array.isArray(branch.may_not_suit)
-    ? branch.may_not_suit
-    : [],
-
-  firstYearPreparation: Array.isArray(branch.first_year_preparation)
-    ? branch.first_year_preparation
-    : [],
-
-  careerPaths: Array.isArray(branch.career_paths)
-    ? branch.career_paths
-    : [],
-
-  yearWiseRoadmap: branch.year_wise_roadmap || {},
-
-  parentGuidance: branch.parent_guidance || {},
-
-  studentFaq: Array.isArray(branch.student_faq)
-    ? branch.student_faq
-    : [],
-
-  careerNotes: branch.career_notes || {},
-})
-
-// ---------------------------------------------------------------------------
-// Branch Card
-// ---------------------------------------------------------------------------
-
-const BranchCard = ({
-  branchDetails,
-  isExpanded,
-  onToggleExpand,
-  onSelectBranch,
-}) => {
-  const {
-    name,
-    aliases,
-    about,
-    coreSubjects,
-    keySkills,
-    careers,
-    categoryId,
-    simpleExplanation,
-    decisionFactors,
-    recommendedLanguages,
-    commonTools,
-    practicalWork,
-    projectAreas,
-    internshipAreas,
-    higherStudies,
-    bestFor,
-    mayNotSuit,
-    firstYearPreparation,
-    yearWiseRoadmap,
-    studentFaq,
-  } = branchDetails
-
-  const hasDeepDive =
-    coreSubjects.length > 0 ||
-    keySkills.length > 0 ||
-    careers.length > 0 ||
-    recommendedLanguages.length > 0 ||
-    commonTools.length > 0 ||
-    firstYearPreparation.length > 0 ||
-    Object.keys(decisionFactors).length > 0
 
   return (
-    <li className={`branch-card branch-card-${categoryId.toLowerCase()}`}>
-      {/* Branch Header */}
-      <div className="branch-card-head">
-        <h3 className="branch-name">{name}</h3>
+    <div className="be-root">
+      <header className="be-header">
+        <div className="be-header-frame">
+          <span className="be-eyebrow">
+            Field guide / {branches.length} branches
+          </span>
+          <h1>Explore engineering branches</h1>
+          <p>
+            Browse each branch's subjects, skills, and career paths before
+            choosing one in your roadmap.
+          </p>
+        </div>
+        <label className="be-search">
+          <span className="be-search-icon">
+            <Search size={14} />
+          </span>
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="search a branch or alias…"
+            aria-label="Search branches"
+          />
+          {query && (
+            <button
+              type="button"
+              className="be-search-clear"
+              onClick={() => setQuery("")}
+              aria-label="Clear search"
+            >
+              <X size={13} />
+            </button>
+          )}
+        </label>
+      </header>
 
-        {aliases.length > 0 && (
-          <div className="branch-alias-row">
-            {aliases.slice(0, 3).map(alias => (
-              <span className="branch-alias-chip" key={alias}>
-                {alias}
-              </span>
-            ))}
-
-            {aliases.length > 3 && (
-              <span className="branch-alias-chip branch-alias-more">
-                +{aliases.length - 3} more
-              </span>
-            )}
-          </div>
-        )}
+      <div
+        className="be-filters"
+        role="tablist"
+        aria-label="Filter by category"
+      >
+        {categories.map((cat) => {
+          const Icon = CATEGORY_ICONS[cat];
+          return (
+            <button
+              key={cat}
+              type="button"
+              className={`be-filter-chip ${activeCategory === cat ? "active" : ""}`}
+              onClick={() => setActiveCategory(cat)}
+            >
+              {Icon && <Icon size={13} />}
+              {cat}
+            </button>
+          );
+        })}
       </div>
 
-      {/* About */}
-      <p className="branch-about">{about}</p>
-
-      {/* Expanded Details */}
-      {isExpanded && (
-        <div className="branch-details">
-
-          {/* Core Subjects */}
-          {coreSubjects.length > 0 && (
-            <div className="branch-detail-block">
-              <h4 className="branch-detail-label">
-                Core Subjects
-              </h4>
-
-              <div className="branch-tag-row">
-                {coreSubjects.map(subject => (
-                  <span className="branch-tag" key={subject}>
-                    {subject}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Key Skills */}
-          {keySkills.length > 0 && (
-            <div className="branch-detail-block">
-              <h4 className="branch-detail-label">
-                Key Skills
-              </h4>
-
-              <div className="branch-tag-row">
-                {keySkills.map(skill => (
-                  <span
-                    className="branch-tag branch-tag-skill"
-                    key={skill}
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Career Opportunities */}
-          {careers.length > 0 && (
-            <div className="branch-detail-block">
-              <h4 className="branch-detail-label">
-                Career Opportunities
-              </h4>
-
-              <ul className="branch-career-list">
-                {careers.map(career => (
-                  <li
-                    className="branch-career-item"
-                    key={career}
-                  >
-                    {career}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Expanded Profile */}
-          {simpleExplanation && (
-            <div className="branch-detail-block">
-              <h4 className="branch-detail-label">In Simple Terms</h4>
-              <p className="branch-about">{simpleExplanation}</p>
-            </div>
-          )}
-
-          {Object.keys(decisionFactors).length > 0 && (
-            <div className="branch-detail-block">
-              <h4 className="branch-detail-label">What To Expect</h4>
-              <ul className="branch-career-list">
-                {Object.entries(decisionFactors).map(([factor, value]) => (
-                  <li className="branch-career-item" key={factor}>
-                    {factor.replace(/_/g, ' ')}: {value}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {[
-            ['Recommended Languages', recommendedLanguages],
-            ['Common Tools', commonTools],
-            ['Practical Work', practicalWork],
-            ['Project Areas', projectAreas],
-            ['Internship Areas', internshipAreas],
-            ['Higher Studies', higherStudies],
-            ['Good Fit For', bestFor],
-            ['May Not Suit', mayNotSuit],
-            ['First-Year Preparation', firstYearPreparation],
-          ].map(([label, items]) => (
-            items.length > 0 && (
-              <div className="branch-detail-block" key={label}>
-                <h4 className="branch-detail-label">{label}</h4>
-                <div className="branch-tag-row">
-                  {items.map(item => (
-                    <span className="branch-tag" key={item}>
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )
+      {trunks.length === 0 ? (
+        <EmptyView message={`No branches match "${query}".`} />
+      ) : (
+        <div className="be-orchard">
+          {trunks.map((trunk) => (
+            <CategoryTrunk
+              key={trunk.category}
+              trunk={trunk}
+              onOpenBranch={openBranch}
+            />
           ))}
-
-          {Object.values(yearWiseRoadmap).some(
-            yearItems => Array.isArray(yearItems) && yearItems.length > 0
-          ) && (
-            <div className="branch-detail-block">
-              <h4 className="branch-detail-label">Year-Wise Roadmap</h4>
-              <ul className="branch-career-list">
-                {Object.entries(yearWiseRoadmap).map(([year, items]) => (
-                  Array.isArray(items) && items.length > 0 && (
-                    <li className="branch-career-item" key={year}>
-                      <strong>{year.replace('_', ' ')}:</strong>{' '}
-                      {items.join(', ')}
-                    </li>
-                  )
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {studentFaq.length > 0 && (
-            <div className="branch-detail-block">
-              <h4 className="branch-detail-label">Student FAQ</h4>
-              <ul className="branch-career-list">
-                {studentFaq.map(faq => (
-                  <li className="branch-career-item" key={faq.question}>
-                    <strong>{faq.question}</strong> {faq.answer}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       )}
 
-      {/* Footer */}
-      <div className="branch-card-footer">
+      {selected && (
+        <BranchDetailModal
+          branch={selected}
+          onClose={() => setSelected(null)}
+          activeTab={activeDetailTab}
+          setActiveTab={setActiveDetailTab}
+        />
+      )}
+    </div>
+  );
+}
 
-        {/* View More */}
-        {hasDeepDive ? (
-          <button
-            type="button"
-            className="branch-view-more-btn"
-            onClick={() => onToggleExpand(branchDetails.id)}
-          >
-            {isExpanded ? 'View Less' : 'View More'}
+/* ═══════════════ TRUNK (one per category) ═══════════════ */
+function CategoryTrunk({ trunk, onOpenBranch }) {
+  const { category, items } = trunk;
+  const Icon = CATEGORY_ICONS[category] || Sparkles;
+  return (
+    <section className="be-trunk">
+      <div className="be-trunk-header">
+        <div className="be-trunk-label">
+          <span className="be-trunk-icon">
+            <Icon size={15} />
+          </span>
+          <h2 className="be-trunk-title">{category}</h2>
+          <span className="be-trunk-count">
+            {items.length} {items.length === 1 ? "branch" : "branches"}
+          </span>
+        </div>
+      </div>
 
-            {isExpanded ? (
-              <BsChevronUp className="branch-view-more-icon" />
-            ) : (
-              <BsChevronDown className="branch-view-more-icon" />
-            )}
-          </button>
-        ) : (
-          <span />
-        )}
+      <div className="be-leaves">
+        {items.map((b) => (
+          <div className="be-leaf" key={b._id}>
+            <BranchCard branch={b} onClick={() => onOpenBranch(b)} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
-        {/* Select Branch */}
+/* ═══════════════ CARD (a leaf on the trunk) ═══════════════ */
+function BranchCard({ branch, onClick }) {
+  const Icon = CATEGORY_ICONS[branch.category] || Sparkles;
+  return (
+    <article
+      className="be-card"
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onClick()}
+    >
+      <div className="be-card-icon">
+        <Icon size={15} />
+      </div>
+
+      <h3 className="be-card-title">{branch.branch_name}</h3>
+      <p className="be-card-about">
+        {branch.simple_explanation || branch.about}
+      </p>
+
+      {branch.decision_factors?.overall_difficulty && (
+        <div className="be-card-difficulty">
+          <span>Difficulty</span>
+          <LevelBar
+            level={branch.decision_factors.overall_difficulty}
+            compact
+          />
+        </div>
+      )}
+
+      <div className="be-card-footer">
+        <span className="be-card-count">
+          {branch.career_count ?? branch.career_opportunities?.length ?? 0}{" "}
+          career paths
+        </span>
+        <span className="be-card-cta">Open →</span>
+      </div>
+    </article>
+  );
+}
+
+/* ═══════════════ LEVEL BAR ═══════════════ */
+function LevelBar({ label, level, compact = false }) {
+  const value = LEVEL_SCALE[level] || 0;
+  return (
+    <div className={`be-level ${compact ? "be-level-compact" : ""}`}>
+      {label && <span className="be-level-label">{label}</span>}
+      <div className="be-level-track">
+        {Array.from({ length: LEVEL_MAX }).map((_, i) => (
+          <span
+            key={i}
+            className={`be-level-seg ${i < value ? "filled" : ""}`}
+          />
+        ))}
+      </div>
+      {!compact && <span className="be-level-text">{level}</span>}
+    </div>
+  );
+}
+
+/* ═══════════════ DETAIL MODAL — datasheet layout ═══════════════ */
+function BranchDetailModal({ branch, onClose, activeTab, setActiveTab }) {
+  return (
+    <div className="be-modal-overlay" onClick={onClose}>
+      <div
+        className="be-modal"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+      >
         <button
           type="button"
-          className="branch-select-btn"
-          onClick={() => onSelectBranch(branchDetails)}
+          className="be-modal-close"
+          onClick={onClose}
+          aria-label="Close"
         >
-          Select Branch
-
-          <BsArrowRight className="branch-select-icon" />
+          <X size={18} />
         </button>
+
+        <header className="be-modal-header">
+          <span className="be-modal-category">{branch.category}</span>
+          <h2>{branch.branch_name}</h2>
+          {branch.aliases?.length > 0 && (
+            <div className="be-alias-row">
+              {branch.aliases.slice(0, 5).map((a) => (
+                <span key={a} className="be-alias-chip">
+                  {a}
+                </span>
+              ))}
+            </div>
+          )}
+        </header>
+
+        <div className="be-modal-shell">
+          <nav className="be-modal-sidebar" role="tablist">
+            {DETAIL_TABS.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === id}
+                className={`be-modal-tab ${activeTab === id ? "active" : ""}`}
+                onClick={() => setActiveTab(id)}
+              >
+                <Icon size={14} />
+                {label}
+              </button>
+            ))}
+          </nav>
+
+          <div className="be-modal-panel">
+            {activeTab === "overview" && <OverviewTab branch={branch} />}
+            {activeTab === "roadmap" && <RoadmapTab branch={branch} />}
+            {activeTab === "careers" && <CareersTab branch={branch} />}
+            {activeTab === "guidance" && <GuidanceTab branch={branch} />}
+          </div>
+        </div>
       </div>
-    </li>
-  )
+    </div>
+  );
 }
 
-// ---------------------------------------------------------------------------
-// Main Component
-// ---------------------------------------------------------------------------
+/* ── Overview ── */
+function OverviewTab({ branch }) {
+  const df = branch.decision_factors || {};
+  return (
+    <div className="be-tab-content">
+      <p className="be-about-text">{branch.about}</p>
 
-const BranchesExplorer = ({onSelectBranch = () => {}}) => {
-  const [branchesList, setBranchesList] = useState([])
+      <Section title="How it stacks up">
+        <div className="be-factor-grid">
+          <LevelBar label="Coding" level={df.coding_level} />
+          <LevelBar label="Mathematics" level={df.mathematics_level} />
+          <LevelBar label="Physics" level={df.physics_level} />
+          <LevelBar label="Hardware" level={df.hardware_level} />
+          <LevelBar label="Overall difficulty" level={df.overall_difficulty} />
+        </div>
+      </Section>
 
-  const [apiStatus, setApiStatus] = useState(
-    apiStatusConstants.initial,
-  )
+      <div className="be-two-col">
+        <Section title="Core subjects">
+          <ChipList items={branch.core_subjects} />
+        </Section>
+        <Section title="Key skills">
+          <ChipList items={branch.key_skills} />
+        </Section>
+      </div>
 
-  const [activeCategoryId, setActiveCategoryId] =
-    useState('ALL')
+      <div className="be-two-col">
+        <Section title="Recommended languages">
+          <ChipList items={branch.recommended_languages} tone="accent" />
+        </Section>
+        <Section title="Common tools">
+          <ChipList items={branch.common_tools} />
+        </Section>
+      </div>
 
-  const [searchInput, setSearchInput] = useState('')
+      <Section title="Practical work you'll do">
+        <ChipList items={branch.practical_work} />
+      </Section>
 
-  const [expandedBranchId, setExpandedBranchId] =
-    useState(null)
+      <div className="be-two-col">
+        <Section title="Best for">
+          <FitList items={branch.best_for} good />
+        </Section>
+        <Section title="May not suit">
+          <FitList items={branch.may_not_suit} good={false} />
+        </Section>
+      </div>
 
-  // -------------------------------------------------------------------------
-  // Fetch Branches
-  // -------------------------------------------------------------------------
-
-  useEffect(() => {
-    getBranches()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const getBranches = async () => {
-    setApiStatus(apiStatusConstants.inProgress)
-
-    try {
-      const response = await fetch(BRANCHES_API_URL)
-
-      if (!response.ok) {
-        throw new Error('Request failed')
-      }
-
-      const data = await response.json()
-
-      // API can return:
-      //
-      // [
-      //   {...},
-      //   {...}
-      // ]
-      //
-      // OR:
-      //
-      // {
-      //   branches: [...]
-      // }
-
-      const branchesArray = Array.isArray(data)
-        ? data
-        : data.branches
-
-      if (!Array.isArray(branchesArray)) {
-        throw new Error('Invalid branches response')
-      }
-
-      // Convert MongoDB fields to frontend fields
-      const formattedData =
-        branchesArray.map(formatBranchItem)
-
-      setBranchesList(formattedData)
-
-      setApiStatus(apiStatusConstants.success)
-    } catch (error) {
-      console.error('Error fetching branches:', error)
-
-      setBranchesList([])
-
-      setApiStatus(apiStatusConstants.failure)
-    }
-  }
-
-  // -------------------------------------------------------------------------
-  // Expand / Collapse Branch
-  // -------------------------------------------------------------------------
-
-  const onToggleExpand = branchId => {
-    setExpandedBranchId(prevId =>
-      prevId === branchId ? null : branchId,
-    )
-  }
-
-  // -------------------------------------------------------------------------
-  // Search
-  // -------------------------------------------------------------------------
-
-  const onChangeSearchInput = event => {
-    setSearchInput(event.target.value)
-  }
-
-  // -------------------------------------------------------------------------
-  // Category
-  // -------------------------------------------------------------------------
-
-  const onChangeCategory = categoryId => {
-    setActiveCategoryId(categoryId)
-    setExpandedBranchId(null)
-  }
-
-  // -------------------------------------------------------------------------
-  // Filter Branches
-  // -------------------------------------------------------------------------
-
-  const getVisibleBranches = () => {
-    const trimmedSearch =
-      searchInput.trim().toLowerCase()
-
-    return branchesList.filter(branch => {
-
-      // Category filter
-      const matchesCategory =
-        activeCategoryId === 'ALL' ||
-        branch.categoryId === activeCategoryId
-
-      if (!matchesCategory) {
-        return false
-      }
-
-      // If search is empty, show all branches
-      if (trimmedSearch === '') {
-        return true
-      }
-
-      // Search branch name
-      const nameMatches =
-        branch.name
-          .toLowerCase()
-          .includes(trimmedSearch)
-
-      // Search aliases
-      const aliasMatches =
-        branch.aliases.some(alias =>
-          alias.toLowerCase().includes(trimmedSearch),
-        )
-
-      return nameMatches || aliasMatches
-    })
-  }
-
-  // -------------------------------------------------------------------------
-  // Loading View
-  // -------------------------------------------------------------------------
-
-  const renderLoadingView = () => (
-    <div className="branches-status-view">
-      <div className="branches-loader" />
-
-      <p className="branches-status-text">
-        Loading branch profiles...
-      </p>
+      {branch.first_year_preparation?.length > 0 && (
+        <Section title="Before you join — first-year prep">
+          <ul className="be-checklist">
+            {branch.first_year_preparation.map((item) => (
+              <li key={item}>
+                <CheckCircle2 size={14} />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
     </div>
-  )
+  );
+}
 
-  // -------------------------------------------------------------------------
-  // Failure View
-  // -------------------------------------------------------------------------
+/* ── Roadmap ── */
+function RoadmapTab({ branch }) {
+  const roadmap = branch.year_wise_roadmap || {};
+  const years = ["year_1", "year_2", "year_3", "year_4"].filter(
+    (y) => roadmap[y]?.length,
+  );
 
-  const renderFailureView = () => (
-    <div className="branches-status-view">
-
-      <p className="branches-status-heading">
-        Something went wrong
-      </p>
-
-      <p className="branches-status-text">
-        We could not load the branch data.
-        Please check your backend connection and try again.
-      </p>
-
-      <button
-        type="button"
-        className="branches-retry-btn"
-        onClick={getBranches}
-      >
-        Retry
-      </button>
-    </div>
-  )
-
-  // -------------------------------------------------------------------------
-  // No Results View
-  // -------------------------------------------------------------------------
-
-  const renderNoResultsView = () => (
-    <div className="branches-status-view">
-
-      <p className="branches-status-heading">
-        No branches match your search
-      </p>
-
-      <p className="branches-status-text">
-        Try a different keyword, or clear the filter
-        to browse all branches.
-      </p>
-    </div>
-  )
-
-  // -------------------------------------------------------------------------
-  // Branch Grid
-  // -------------------------------------------------------------------------
-
-  const renderBranchesGrid = visibleBranches => (
-    <ul className="branches-grid">
-      {visibleBranches.map(branch => (
-        <BranchCard
-          key={branch.id}
-          branchDetails={branch}
-          isExpanded={
-            expandedBranchId === branch.id
-          }
-          onToggleExpand={onToggleExpand}
-          onSelectBranch={onSelectBranch}
-        />
-      ))}
-    </ul>
-  )
-
-  // -------------------------------------------------------------------------
-  // Success View
-  // -------------------------------------------------------------------------
-
-  const renderSuccessView = () => {
-    const visibleBranches = getVisibleBranches()
-
-    if (visibleBranches.length === 0) {
-      return renderNoResultsView()
-    }
-
-    return renderBranchesGrid(visibleBranches)
+  if (years.length === 0) {
+    return (
+      <div className="be-tab-content">
+        <p className="be-empty-note">
+          No year-wise roadmap available for this branch yet.
+        </p>
+      </div>
+    );
   }
-
-  // -------------------------------------------------------------------------
-  // Content
-  // -------------------------------------------------------------------------
-
-  const renderContent = () => {
-    switch (apiStatus) {
-      case apiStatusConstants.inProgress:
-        return renderLoadingView()
-
-      case apiStatusConstants.failure:
-        return renderFailureView()
-
-      case apiStatusConstants.success:
-        return renderSuccessView()
-
-      default:
-        return null
-    }
-  }
-
-  // -------------------------------------------------------------------------
-  // JSX
-  // -------------------------------------------------------------------------
 
   return (
-    <div className="branches-explorer-bg">
-
-      {/* Hero Section */}
-      <section className="branches-hero">
-
-        <p className="branches-hero-eyebrow">
-          Career Guidance Platform
-        </p>
-
-        <h1 className="branches-hero-heading">
-          Explore Every B.Tech Branch Before You Choose
-        </h1>
-
-        <p className="branches-hero-subtext">
-          44+ branch name variants grouped into clear
-          profiles - subjects, skills, and career paths,
-          so you pick with clarity, not confusion.
-        </p>
-
-        {/* Search */}
-        <div className="branches-search-bar">
-
-          <BsSearch className="branches-search-icon" />
-
-          <input
-            type="search"
-            className="branches-search-input"
-            placeholder="Search by branch name, e.g. AI, VLSI, Civil..."
-            value={searchInput}
-            onChange={onChangeSearchInput}
-          />
-
-        </div>
-      </section>
-
-      {/* Content */}
-      <section className="branches-content">
-
-        {/* Category Tabs */}
-        <div className="branches-category-tabs">
-
-          {categoriesList.map(category => {
-            const Icon = category.icon
-
-            const isActive =
-              category.id === activeCategoryId
-
-            return (
-              <button
-                type="button"
-                key={category.id}
-                className={`branches-category-tab ${
-                  isActive
-                    ? 'branches-category-tab-active'
-                    : ''
-                }`}
-                onClick={() =>
-                  onChangeCategory(category.id)
-                }
-              >
-                {Icon && (
-                  <Icon className="branches-category-tab-icon" />
-                )}
-
-                {category.label}
-              </button>
-            )
-          })}
-
-        </div>
-
-        {/* API URL Information */}
-        <p className="branches-source-note">
-          Branch data is loaded from{' '}
-          <code>{BRANCHES_API_URL}</code>
-        </p>
-
-        {/* Content */}
-        {renderContent()}
-
-      </section>
+    <div className="be-tab-content">
+      <div className="be-year-track">
+        <div className="be-year-rail" />
+        {years.map((y, i) => (
+          <div className="be-year-stop" key={y}>
+            <div className="be-year-node">{i + 1}</div>
+            <div className="be-year-card">
+              <h4>Year {i + 1}</h4>
+              <ul>
+                {roadmap[y].map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
-  )
+  );
 }
 
-export default BranchesExplorer
+/* ── Careers ── */
+function CareersTab({ branch }) {
+  return (
+    <div className="be-tab-content">
+      <Section
+        title={`Career opportunities (${branch.career_paths?.length ?? branch.career_opportunities?.length ?? 0})`}
+      >
+        <div className="be-career-grid">
+          {(branch.career_paths?.length
+            ? branch.career_paths
+            : (branch.career_opportunities || []).map((c) => ({ career: c }))
+          ).map((cp) => (
+            <div className="be-career-card" key={cp.career}>
+              <h4>{cp.career}</h4>
+              {cp.why_it_fits && <p>{cp.why_it_fits}</p>}
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {branch.project_areas?.length > 0 && (
+        <Section title="Project areas">
+          <ChipList items={branch.project_areas} />
+        </Section>
+      )}
+
+      {branch.internship_areas?.length > 0 && (
+        <Section title="Internship areas">
+          <ChipList items={branch.internship_areas} tone="accent" />
+        </Section>
+      )}
+
+      {branch.higher_studies?.length > 0 && (
+        <Section title="Higher-study options">
+          <ChipList items={branch.higher_studies} />
+        </Section>
+      )}
+
+      {branch.career_notes && (
+        <div className="be-notice">
+          <p>{branch.career_notes.reason}</p>
+          {branch.career_notes.recommendation && (
+            <p className="be-notice-strong">
+              {branch.career_notes.recommendation}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Guidance (FAQ + parents) ── */
+function GuidanceTab({ branch }) {
+  const [openFaq, setOpenFaq] = useState(null);
+
+  return (
+    <div className="be-tab-content">
+      {branch.parent_guidance && (
+        <Section title="For parents">
+          <p className="be-about-text">
+            {branch.parent_guidance.what_parents_should_know}
+          </p>
+          {branch.parent_guidance.important_parent_questions?.length > 0 && (
+            <ul className="be-checklist">
+              {branch.parent_guidance.important_parent_questions.map((q) => (
+                <li key={q}>
+                  <HelpCircle size={14} />
+                  {q}
+                </li>
+              ))}
+            </ul>
+          )}
+        </Section>
+      )}
+
+      {branch.student_faq?.length > 0 && (
+        <Section title="Student FAQ">
+          <div className="be-faq-list">
+            {branch.student_faq.map((item, i) => (
+              <div
+                className={`be-faq-item ${openFaq === i ? "open" : ""}`}
+                key={item.question}
+              >
+                <button
+                  type="button"
+                  className="be-faq-question"
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                >
+                  {item.question}
+                  <ChevronDown size={15} className="be-faq-chevron" />
+                </button>
+                {openFaq === i && (
+                  <p className="be-faq-answer">{item.answer}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════ SHARED BITS ═══════════════ */
+function Section({ title, children }) {
+  return (
+    <section className="be-section">
+      <h3 className="be-section-title">{title}</h3>
+      {children}
+    </section>
+  );
+}
+
+function ChipList({ items, tone }) {
+  if (!items?.length) return <p className="be-empty-note">Not specified.</p>;
+  return (
+    <div className="be-chip-row">
+      {items.map((item) => (
+        <span
+          key={item}
+          className={`be-chip ${tone === "accent" ? "be-chip-accent" : ""}`}
+        >
+          {item}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function FitList({ items, good }) {
+  if (!items?.length) return <p className="be-empty-note">Not specified.</p>;
+  return (
+    <ul className="be-fit-list">
+      {items.map((item) => (
+        <li key={item} className={good ? "good" : "bad"}>
+          {good ? <CheckCircle2 size={14} /> : <XCircle size={14} />}
+          {item}
+        </li>
+      ))}
+    </ul>
+  );
+}

@@ -1,8 +1,5 @@
 import React from "react";
-import {
-  NavLink,
-  useNavigate,
-} from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import {
   LayoutDashboard,
@@ -38,10 +35,7 @@ const NAVIGATION = [
   },
 ];
 
-export default function Sidebar({
-  user,
-  onLogout,
-}) {
+export default function Sidebar({ user, onLogout }) {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -56,96 +50,60 @@ export default function Sidebar({
 
   return (
     <aside className="sidebar">
-
       {/* ==================================================
           BRAND
       ================================================== */}
 
       <div className="sidebar-brand">
-
-        <div className="brand-mark">
-          N
-        </div>
+        <div className="brand-mark">N</div>
 
         <div className="brand-content">
-          <div className="brand-name">
-            NextStep
-          </div>
+          <div className="brand-name">NextStep</div>
 
-          <div className="brand-tagline">
-            Career planning
-          </div>
+          <div className="brand-tagline">Career planning</div>
         </div>
-
       </div>
-
 
       {/* ==================================================
           NAVIGATION
       ================================================== */}
 
       <nav className="sidebar-nav">
+        <div className="nav-label">WORKSPACE</div>
 
-        <div className="nav-label">
-          WORKSPACE
-        </div>
+        {NAVIGATION.map(({ label, path, icon: Icon }) => (
+          <NavLink
+            key={path}
+            to={path}
+            end={path === "/dashboard" || path === "/roadmap"}
+            className={({ isActive }) =>
+              `sidebar-link ${isActive ? "sidebar-link-active" : ""}`
+            }
+          >
+            <span className="sidebar-icon">
+              <Icon size={18} />
+            </span>
 
-        {NAVIGATION.map(
-          ({
-            label,
-            path,
-            icon: Icon,
-          }) => (
-            <NavLink
-              key={path}
-              to={path}
-              end={
-                path === "/dashboard" ||
-                path === "/roadmap"
-              }
-              className={({ isActive }) =>
-                `sidebar-link ${
-                  isActive
-                    ? "sidebar-link-active"
-                    : ""
-                }`
-              }
-            >
-              <span className="sidebar-icon">
-                <Icon size={18} />
-              </span>
-
-              <span className="sidebar-text">
-                {label}
-              </span>
-            </NavLink>
-          )
-        )}
-
+            <span className="sidebar-text">{label}</span>
+          </NavLink>
+        ))}
       </nav>
-
 
       {/* ==================================================
           BOTTOM
       ================================================== */}
 
       <div className="sidebar-bottom">
-
         {/* Current career */}
         <div className="career-card">
-
-          <span className="career-label">
-            CURRENT PATH
-          </span>
+          <span className="career-label">CURRENT PATH</span>
 
           <strong className="career-title">
-            {user?.careerGoal ||
-              "Choose your career"}
+            {user?.careerGoal || "Choose your career"}
           </strong>
 
           <span className="career-meta">
-            {user?.branch ||
-              "Branch not selected"}
+            {user?.branch || "Branch not selected"}
 
             {user?.currentSemester && (
               <>
@@ -154,30 +112,21 @@ export default function Sidebar({
               </>
             )}
           </span>
-
         </div>
-
 
         {/* Profile */}
         <NavLink
           to="/profile"
           className={({ isActive }) =>
-            `sidebar-link ${
-              isActive
-                ? "sidebar-link-active"
-                : ""
-            }`
+            `sidebar-link ${isActive ? "sidebar-link-active" : ""}`
           }
         >
           <span className="sidebar-icon">
             <UserRound size={18} />
           </span>
 
-          <span className="sidebar-text">
-            Profile
-          </span>
+          <span className="sidebar-text">Profile</span>
         </NavLink>
-
 
         {/* Logout */}
         <button
@@ -189,13 +138,9 @@ export default function Sidebar({
             <LogOut size={18} />
           </span>
 
-          <span className="sidebar-text">
-            Logout
-          </span>
+          <span className="sidebar-text">Logout</span>
         </button>
-
       </div>
-
     </aside>
   );
 }
