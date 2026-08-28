@@ -338,6 +338,7 @@
    ========================================================= */
 .ep-field {
   min-width: 0;
+  margin-top: 10px;
 }
 .ep-semester-field {
   grid-column: 1 / -1;
@@ -728,6 +729,7 @@
   font-weight: 600;
   cursor: not-allowed;
   opacity: 0.65;
+  margin-top: 10px;
 }
 .ep-danger-disabled {
   display: flex;

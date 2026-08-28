@@ -36,6 +36,31 @@ export default function EditProfile() {
   const [successMsg, setSuccessMsg] = useState("");
 
   /* ==================================================
+     PASSWORD (Security tab) — FIX: backend already
+     exposes PATCH /profile/password; this was previously
+     stubbed out and disabled in the UI for no reason.
+     ================================================== */
+
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+
+  /* ==================================================
+     DELETE ACCOUNT (Danger tab) — FIX: backend already
+     exposes DELETE /profile/delete (soft delete); this was
+     previously stubbed out and disabled in the UI as well.
+     ================================================== */
+
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
+  /* ==================================================
      GET PROFILE
      ================================================== */
 
@@ -125,10 +150,9 @@ export default function EditProfile() {
       return;
     }
 
-    if (!formData.lastName.trim()) {
-      setErrorMsg("Last name is required.");
-      return;
-    }
+    // FIX: the backend treats lastName as optional
+    // (`lastName ? lastName.trim() : ""`), so requiring it here
+    // rejected valid submissions the API would have accepted.
 
     try {
       setSaving(true);
@@ -171,6 +195,105 @@ export default function EditProfile() {
       );
     } finally {
       setSaving(false);
+    }
+  };
+
+  /* ==================================================
+     PASSWORD CHANGE
+     ================================================== */
+
+  const handlePasswordChange = (event) => {
+    const { name, value } = event.target;
+
+    setPasswordForm((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+
+    setPasswordError("");
+    setPasswordSuccess("");
+  };
+
+  const handlePasswordSubmit = async (event) => {
+    event.preventDefault();
+
+    setPasswordError("");
+    setPasswordSuccess("");
+
+    const { currentPassword, newPassword, confirmPassword } = passwordForm;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordError("Please fill out all password fields.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("New password and confirm password do not match.");
+      return;
+    }
+
+    try {
+      setPasswordSaving(true);
+
+      const response = await axios.patch(
+        `${API_BASE_URL}/api/profile/password`,
+        { currentPassword, newPassword, confirmPassword },
+        { withCredentials: true }
+      );
+
+      setPasswordSuccess(
+        response.data?.message || "Password updated successfully."
+      );
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (err) {
+      setPasswordError(
+        err.response?.data?.message ||
+          "Could not update your password. Please try again."
+      );
+    } finally {
+      setPasswordSaving(false);
+    }
+  };
+
+  /* ==================================================
+     DELETE ACCOUNT
+     ================================================== */
+
+  const handleDeleteAccount = async () => {
+    setDeleteError("");
+
+    if (deleteConfirmText.trim().toUpperCase() !== "DELETE") {
+      setDeleteError('Type "DELETE" to confirm.');
+      return;
+    }
+
+    try {
+      setDeleting(true);
+
+      await axios.delete(`${API_BASE_URL}/api/profile/delete`, {
+        withCredentials: true,
+      });
+
+      // The backend clears the jwt_token cookie as part of this
+      // request, so the session is already gone — send the user
+      // to login rather than leaving them on a page that requires auth.
+      navigate("/login", {
+        replace: true,
+        state: {
+          message: "Your account has been deactivated. You can restore it within 7 days by logging in.",
+        },
+      });
+    } catch (err) {
+      setDeleteError(
+        err.response?.data?.message ||
+          "Could not delete your account. Please try again."
+      );
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -291,8 +414,8 @@ export default function EditProfile() {
                 }`}
                 onClick={() => {
                   setActiveTab("security");
-                  setErrorMsg("");
-                  setSuccessMsg("");
+                  setPasswordError("");
+                  setPasswordSuccess("");
                 }}
               >
                 <span className="ep-tab-title">
@@ -311,8 +434,7 @@ export default function EditProfile() {
                 }`}
                 onClick={() => {
                   setActiveTab("danger");
-                  setErrorMsg("");
-                  setSuccessMsg("");
+                  setDeleteError("");
                 }}
               >
                 <span className="ep-tab-title">
@@ -383,7 +505,8 @@ export default function EditProfile() {
 
                     <div className="ep-field">
                       <label htmlFor="lastName">
-                        Last Name
+                        Last Name{" "}
+                        <span className="ep-optional-tag">(optional)</span>
                       </label>
 
                       <div className="ep-input-wrapper">
@@ -549,32 +672,87 @@ export default function EditProfile() {
                   </span>
                 </div>
 
-                <div className="ep-info-row">
-                  <div>
-                    <strong>Password</strong>
-                    <span>
-                      Change your password to keep your account
-                      secure.
-                    </span>
+                {/* FIX: wired up to PATCH /profile/password, which
+                    already existed on the backend but was never
+                    called from the UI. */}
+
+                <form onSubmit={handlePasswordSubmit} className="ep-password-form">
+
+                  <div className="ep-field">
+                    <label htmlFor="currentPassword">Current Password</label>
+                    <div className="ep-input-wrapper">
+                      <FaLock />
+                      <input
+                        id="currentPassword"
+                        name="currentPassword"
+                        type="password"
+                        value={passwordForm.currentPassword}
+                        onChange={handlePasswordChange}
+                        placeholder="Enter current password"
+                        autoComplete="current-password"
+                      />
+                    </div>
                   </div>
 
-                  <button
-                    type="button"
-                    className="ep-outline-btn"
-                    disabled
-                  >
-                    Change Password
-                  </button>
-                </div>
+                  <div className="ep-field">
+                    <label htmlFor="newPassword">New Password</label>
+                    <div className="ep-input-wrapper">
+                      <FaLock />
+                      <input
+                        id="newPassword"
+                        name="newPassword"
+                        type="password"
+                        value={passwordForm.newPassword}
+                        onChange={handlePasswordChange}
+                        placeholder="At least 8 characters, mixed case, number, symbol"
+                        autoComplete="new-password"
+                      />
+                    </div>
+                  </div>
 
-                <div className="ep-security-note">
-                  <FaLock />
+                  <div className="ep-field">
+                    <label htmlFor="confirmPassword">Confirm New Password</label>
+                    <div className="ep-input-wrapper">
+                      <FaLock />
+                      <input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type="password"
+                        value={passwordForm.confirmPassword}
+                        onChange={handlePasswordChange}
+                        placeholder="Re-enter new password"
+                        autoComplete="new-password"
+                      />
+                    </div>
+                  </div>
 
-                  <p>
-                    Password management will be available once
-                    the authentication flow supports it.
-                  </p>
-                </div>
+                  <div aria-live="polite">
+                    {passwordError && (
+                      <div className="ep-message ep-message-error">
+                        <FaExclamationTriangle />
+                        <span>{passwordError}</span>
+                      </div>
+                    )}
+
+                    {passwordSuccess && (
+                      <div className="ep-message ep-message-success">
+                        <FaCheck />
+                        <span>{passwordSuccess}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="ep-form-footer">
+                    <button
+                      type="submit"
+                      className="ep-save-btn"
+                      disabled={passwordSaving}
+                    >
+                      {passwordSaving ? "Updating..." : "Update Password"}
+                    </button>
+                  </div>
+
+                </form>
 
               </section>
             )}
@@ -609,29 +787,58 @@ export default function EditProfile() {
                   </div>
                 </div>
 
+                {/* FIX: wired up to DELETE /profile/delete, which
+                    already existed on the backend (soft delete with
+                    a 7-day restore window) but was never called from
+                    the UI. */}
+
                 <div className="ep-danger-row">
                   <div>
-                    <strong>Delete Account</strong>
+                    <strong>Deactivate Account</strong>
 
                     <span>
-                      Permanently remove your account and
-                      associated profile data.
+                      Your account will be deactivated immediately.
+                      You can restore it within 7 days by logging back in
+                      with the restore flow — after that it's gone for good.
                     </span>
                   </div>
-
-                  <button
-                    type="button"
-                    className="ep-delete-btn"
-                    disabled
-                  >
-                    Delete Account
-                  </button>
                 </div>
 
-                <p className="ep-danger-disabled">
-                  <FaLock size={10} />
-                  Account deletion is currently unavailable.
-                </p>
+                <div className="ep-field">
+                  <label htmlFor="deleteConfirm">
+                    Type <strong>DELETE</strong> to confirm
+                  </label>
+                  <div className="ep-input-wrapper">
+                    <input
+                      id="deleteConfirm"
+                      type="text"
+                      value={deleteConfirmText}
+                      onChange={(e) => {
+                        setDeleteConfirmText(e.target.value);
+                        setDeleteError("");
+                      }}
+                      placeholder="DELETE"
+                    />
+                  </div>
+                </div>
+
+                <div aria-live="polite">
+                  {deleteError && (
+                    <div className="ep-message ep-message-error">
+                      <FaExclamationTriangle />
+                      <span>{deleteError}</span>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  className="ep-delete-btn"
+                  disabled={deleting || deleteConfirmText.trim().toUpperCase() !== "DELETE"}
+                  onClick={handleDeleteAccount}
+                >
+                  {deleting ? "Deactivating..." : "Deactivate Account"}
+                </button>
 
               </section>
             )}
