@@ -56,11 +56,17 @@ export default function Dashboard() {
   const [actLoading, setActLoading] = useState(true);
   const [hasCurriculum, setHasCurriculum] = useState(false);
 
-  /*
-   * Change this later when your backend stores
-   * the generated roadmap inside the user object.
-   */
-  const hasRoadmap = !!user?.roadmap;
+  // FIX: `user.roadmap` was never a field returned by the backend's
+  // publicUser() response (see auth router: _id, firstName, lastName,
+  // emailId, branch, careerGoal, specialization, currentSemester,
+  // curriculum, createdAt). Reading `user?.roadmap` was always
+  // undefined, so the two checklist items below could never be marked
+  // done. Until the backend actually stores a roadmap field, treat a
+  // populated curriculum as the signal that a roadmap has been
+  // generated for the user.
+  const hasRoadmap = Array.isArray(user?.curriculum)
+    ? user.curriculum.length > 0
+    : false;
 
   const currentSemester = user?.currentSemester || 1;
   const totalSemesters = 8;
