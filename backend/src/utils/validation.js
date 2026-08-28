@@ -21,7 +21,7 @@ const validateSignUpData = (req) => {
     })
   ) {
     throw new Error(
-      "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol."
+      "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol.",
     );
   }
 };

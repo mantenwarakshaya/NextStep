@@ -150,7 +150,7 @@ const userSchema = new mongoose.Schema(
 
   {
     timestamps: true,
-  }
+  },
 );
 
 // =====================================================
@@ -178,10 +178,7 @@ userSchema.pre("save", async function () {
 
   const salt = await bcrypt.genSalt(10);
 
-  this.password = await bcrypt.hash(
-    this.password,
-    salt
-  );
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
 // =====================================================
@@ -203,9 +200,7 @@ userSchema.pre("save", async function () {
     .select("branch");
 
   if (existing?.branch && existing.branch !== this.branch) {
-    throw new Error(
-      "Branch has already been selected and cannot be changed."
-    );
+    throw new Error("Branch has already been selected and cannot be changed.");
   }
 });
 
@@ -213,43 +208,31 @@ userSchema.pre("save", async function () {
 // LOCK BRANCH FOR UPDATE QUERIES
 // =====================================================
 
-userSchema.pre(
-  ["findOneAndUpdate", "updateOne"],
-  async function () {
-    const update = this.getUpdate() || {};
+userSchema.pre(["findOneAndUpdate", "updateOne"], async function () {
+  const update = this.getUpdate() || {};
 
-    const newBranch =
-      update.branch ??
-      update.$set?.branch;
+  const newBranch = update.branch ?? update.$set?.branch;
 
-    if (newBranch === undefined) {
-      return;
-    }
-
-    const existing = await this.model
-      .findOne(this.getQuery())
-      .setOptions({ includeDeleted: true })
-      .select("branch");
-
-    if (
-      existing?.branch &&
-      existing.branch !== newBranch
-    ) {
-      throw new Error(
-        "Branch has already been selected and cannot be changed."
-      );
-    }
+  if (newBranch === undefined) {
+    return;
   }
-);
+
+  const existing = await this.model
+    .findOne(this.getQuery())
+    .setOptions({ includeDeleted: true })
+    .select("branch");
+
+  if (existing?.branch && existing.branch !== newBranch) {
+    throw new Error("Branch has already been selected and cannot be changed.");
+  }
+});
 
 // =====================================================
 // JWT
 // =====================================================
 
 userSchema.methods.getJWT = function () {
-  const secret =
-    process.env.JWT_SECRET ||
-    "your_fallback_jwt_secret_key";
+  const secret = process.env.JWT_SECRET || "your_fallback_jwt_secret_key";
 
   return jwt.sign(
     {
@@ -258,7 +241,7 @@ userSchema.methods.getJWT = function () {
     secret,
     {
       expiresIn: "7d",
-    }
+    },
   );
 };
 
@@ -266,13 +249,9 @@ userSchema.methods.getJWT = function () {
 // PASSWORD VALIDATION
 // =====================================================
 
-userSchema.methods.validatePassword =
-  async function (passwordInput) {
-    return bcrypt.compare(
-      passwordInput,
-      this.password
-    );
-  };
+userSchema.methods.validatePassword = async function (passwordInput) {
+  return bcrypt.compare(passwordInput, this.password);
+};
 
 const User = mongoose.model("User", userSchema);
 
