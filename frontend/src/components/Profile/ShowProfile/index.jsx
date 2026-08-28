@@ -168,8 +168,7 @@ export default function ShowProfile() {
   if (!user) {
     return (
       <EmptyView
-        title="No profile found"
-        message="Your profile data is not available right now."
+        message="No profile data is available right now."
       />
     );
   }
@@ -310,7 +309,7 @@ export default function ShowProfile() {
               <p className="p-focus-description">{currentFocusDescription}</p>
 
               {roadmapLoading ? (
-                <div className="p-focus-loading">Loading your roadmap...</div>
+                <LoaderView message="Loading your roadmap..." />
               ) : currentFocusItems.length > 0 ? (
                 <div className="p-focus-list">
                   {currentFocusItems.map((item, index) => (
@@ -321,12 +320,11 @@ export default function ShowProfile() {
                   ))}
                 </div>
               ) : (
-                <div className="p-focus-empty">
-                  <span>
-                    Your AI-generated roadmap has not been created yet.
-                  </span>
-                  <Link to="/semester-roadmap">Generate roadmap</Link>
-                </div>
+                <EmptyView
+                  message="Your AI-generated roadmap has not been created yet."
+                  actionText="Generate roadmap"
+                  onAction={() => (window.location.href = "/semester-roadmap")}
+                />
               )}
             </article>
           </section>

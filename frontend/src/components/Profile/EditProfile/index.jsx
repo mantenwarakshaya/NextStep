@@ -8,6 +8,7 @@ import {
   FaLock,
   FaUser,
 } from "react-icons/fa";
+import { ErrorView, LoaderView } from "../../Common";
 import "./index.css";
 
 const API_BASE_URL =
@@ -187,18 +188,7 @@ export default function EditProfile() {
      ================================================== */
 
   if (loading) {
-    return (
-      <main className="ep-workspace">
-        <div className="ep-shell">
-          <div className="ep-loading">
-            <span className="ep-loading-dot" />
-            <span className="ep-loading-dot" />
-            <span className="ep-loading-dot" />
-            Loading account settings…
-          </div>
-        </div>
-      </main>
-    );
+    return <LoaderView message="Loading account settings..." />;
   }
 
   /* ==================================================
@@ -207,28 +197,10 @@ export default function EditProfile() {
 
   if (!user) {
     return (
-      <main className="ep-workspace">
-        <div className="ep-shell">
-          <div className="ep-error-page">
-            <FaExclamationTriangle />
-
-            <h2>Unable to load profile</h2>
-
-            <p>
-              {errorMsg ||
-                "Your profile could not be retrieved."}
-            </p>
-
-            <button
-              type="button"
-              className="ep-dark-btn"
-              onClick={getProfile}
-            >
-              Try Again
-            </button>
-          </div>
-        </div>
-      </main>
+      <ErrorView
+        message={errorMsg || "Your profile could not be retrieved."}
+        onRetry={getProfile}
+      />
     );
   }
 

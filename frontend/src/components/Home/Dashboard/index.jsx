@@ -4,11 +4,11 @@ import {
   Compass,
   Map,
   ArrowRight,
-  Clock,
   BarChart2,
   Target,
   BookOpen,
 } from "lucide-react";
+import { EmptyView, LoaderView } from "../../Common";
 import "./index.css";
 
 const workspaces = [
@@ -237,23 +237,15 @@ export default function Dashboard() {
             {/* Loading */}
 
             {actLoading ? (
-              <div className="d-activity-loading">
-                <div className="d-skeleton" />
-
-                <div className="d-skeleton d-skeleton--short" />
-              </div>
+              <LoaderView message="Loading recent activity..." />
             ) : activity.length === 0 ? (
               /* Empty State */
 
-              <div className="d-activity-empty">
-                <Clock size={22} className="d-empty-icon" />
-
-                <p>No recent activity yet</p>
-
-                <Link to="/semester-roadmap" className="d-empty-btn">
-                  Go to Semester Plan
-                </Link>
-              </div>
+              <EmptyView
+                message="No recent activity yet."
+                actionText="Go to Semester Plan"
+                onAction={() => (window.location.href = "/semester-roadmap")}
+              />
             ) : (
               /* Activity List */
 
