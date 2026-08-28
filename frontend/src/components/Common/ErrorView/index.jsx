@@ -3,14 +3,21 @@ import "./index.css";
 
 class ErrorView extends Component {
   render() {
-    // Default props can be handled via destructuring
-    const { message = "Something went wrong", onRetry } = this.props;
+    const {
+      message = "Something went wrong",
+      onRetry,
+      className = "",
+    } = this.props;
 
     return (
-      <div className="error-container">
+      <div
+        className={`error-container ${className}`.trim()}
+        role="alert"
+      >
+        <div className="error-mark" aria-hidden="true">!</div>
         <p className="error-text">{message}</p>
         {onRetry && (
-          <button className="retry-btn" onClick={onRetry}>
+          <button type="button" className="retry-btn" onClick={onRetry}>
             Retry
           </button>
         )}

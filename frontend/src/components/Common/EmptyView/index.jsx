@@ -3,14 +3,18 @@ import "./index.css";
 
 class EmptyView extends Component {
   render() {
-    // Accessing props using this.props in a class component
-    const { message, actionText, onAction } = this.props;
+    const { message, actionText, onAction, className = "" } = this.props;
 
     return (
-      <div className="empty-container">
+      <div className={`empty-container ${className}`.trim()} role="status">
+        <div className="empty-mark" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
         <p className="empty-text">{message}</p>
         {actionText && (
-          <button className="empty-btn" onClick={onAction}>
+          <button type="button" className="empty-btn" onClick={onAction}>
             {actionText}
           </button>
         )}

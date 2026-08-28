@@ -1,8 +1,39 @@
 .loader-container {
-  height: 100vh;
+  min-height: 180px;
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 12px;
   justify-content: center;
   align-items: center;
+  gap: 10px;
+  padding: 2rem 1.25rem;
+  color: #475569;
+  text-align: center;
+  background: #ffffff;
+}
+
+.loader-mark {
+  width: 64px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #dbe4f0;
+  border-radius: 16px;
+  background: #f5f7ff;
+}
+
+.loader-text {
+  margin: 0;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+@media (max-width: 480px) {
+  .loader-container {
+    min-height: 150px;
+    padding: 1.5rem 1rem;
+  }
 }

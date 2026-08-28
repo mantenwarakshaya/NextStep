@@ -1,22 +1,52 @@
 .error-container {
-  height: 100vh;
+  min-height: 180px;
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  padding: 2rem 1.25rem;
+  text-align: center;
+  background: #ffffff;
+}
+
+.error-mark {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #fecaca;
+  border-radius: 14px;
+  background: #fff1f2;
+  color: #be123c;
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .error-text {
-  color: #475569;
-  font-size: 18px;
+  max-width: 30rem;
+  margin: 0;
+  color: #9f1239;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .retry-btn {
-  background-color: #2a4fcb;
-  color: #ffffff;
-  border: none;
-  padding: 10px 18px;
+  border: 1px solid #be123c;
   border-radius: 8px;
+  background-color: #be123c;
+  color: #ffffff;
+  padding: 9px 15px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.retry-btn:hover {
+  background-color: #9f1239;
+  border-color: #9f1239;
 }
