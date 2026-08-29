@@ -12,6 +12,7 @@ const {
 const {
   generateSemester,
   getSemesterRoadmap,
+  updateSemesterProgress,
 } = require("../controllers/semesterRoadmapController");
 
 // ======================================================
@@ -41,5 +42,8 @@ router.post("/semester/:semester", userAuth, generateSemester);
 // Get semester roadmap
 
 router.get("/semester/:semester", userAuth, getSemesterRoadmap);
+
+// Update progress for a semester roadmap
+router.patch("/semester/:semester/progress", userAuth, updateSemesterProgress);
 
 module.exports = router;

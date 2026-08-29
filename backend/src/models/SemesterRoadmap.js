@@ -148,6 +148,31 @@ const semesterRoadmapSchema = new mongoose.Schema(
       default: [],
     },
 
+    progress: {
+      type: {
+        weeklyPlan: [
+          {
+            week: Number,
+            completed: { type: Boolean, default: false },
+            topics: [Boolean],
+            dsa: [Boolean],
+            projectWork: [Boolean],
+          },
+        ],
+        dailyPlan: [
+          {
+            date: String,
+            completed: { type: Boolean, default: false },
+            activities: [Boolean],
+            dsa: [Boolean],
+            collegeWork: [Boolean],
+          },
+        ],
+        milestones: [Boolean],
+      },
+      default: {},
+    },
+
     semesterOutcome: {
       type: String,
       default: "",

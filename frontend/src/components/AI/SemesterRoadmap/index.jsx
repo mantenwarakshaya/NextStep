@@ -342,6 +342,148 @@ export default function Roadmap() {
     }
   };
 
+  const applyProgressUpdate = (progress, { kind, index, itemType, itemIndex, value }) => {
+    if (!progress) return buildProgressFallback({});
+
+    const nextProgress = JSON.parse(JSON.stringify(progress));
+
+    if (kind === "weekly") {
+      const weekProgress = nextProgress.weeklyPlan?.[index];
+      if (!weekProgress) return nextProgress;
+
+      if (itemType && Number.isInteger(itemIndex)) {
+        const list = weekProgress[itemType];
+        if (Array.isArray(list) && itemIndex >= 0 && itemIndex < list.length) {
+          list[itemIndex] = Boolean(value);
+        }
+      }
+
+      weekProgress.completed = [
+        ...(weekProgress.topics || []),
+        ...(weekProgress.dsa || []),
+        ...(weekProgress.projectWork || []),
+      ].every(Boolean);
+    }
+
+    if (kind === "daily") {
+      const dayProgress = nextProgress.dailyPlan?.[index];
+      if (!dayProgress) return nextProgress;
+
+      if (itemType && Number.isInteger(itemIndex)) {
+        const list = dayProgress[itemType];
+        if (Array.isArray(list) && itemIndex >= 0 && itemIndex < list.length) {
+          list[itemIndex] = Boolean(value);
+        }
+      }
+
+      dayProgress.completed = [
+        ...(dayProgress.activities || []),
+        ...(dayProgress.dsa || []),
+        ...(dayProgress.collegeWork || []),
+      ].every(Boolean);
+    }
+
+    if (kind === "milestone") {
+      if (Number.isInteger(itemIndex) && Array.isArray(nextProgress.milestones)) {
+        nextProgress.milestones[itemIndex] = Boolean(value);
+      }
+    }
+
+    return nextProgress;
+  };
+
+  const handleProgressToggle = async (semester, { kind, index, itemType, itemIndex, value }) => {
+    const selectedRoadmap =
+      currentSemester === semester
+        ? currentSemesterRoadmap
+        : completedRoadmapCache[semester];
+
+    if (!selectedRoadmap) return;
+
+    const optimisticProgress = applyProgressUpdate(selectedRoadmap.progress || buildProgressFallback(selectedRoadmap), {
+      kind,
+      index,
+      itemType,
+      itemIndex,
+      value,
+    });
+
+    if (currentSemester === semester) {
+      setCurrentSemesterRoadmap((prev) =>
+        prev
+          ? {
+              ...prev,
+              progress: optimisticProgress,
+            }
+          : prev,
+      );
+    }
+
+    setCompletedRoadmapCache((prev) => {
+      if (!prev[semester]) return prev;
+
+      return {
+        ...prev,
+        [semester]: {
+          ...prev[semester],
+          progress: optimisticProgress,
+        },
+      };
+    });
+
+    try {
+      const response = await fetch(
+        `${BASE_URL}/api/roadmap/semester/${semester}/progress`,
+        {
+          method: "PATCH",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            kind,
+            index,
+            itemType,
+            itemIndex,
+            value,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Could not update progress.");
+      }
+
+      if (currentSemester === semester) {
+        setCurrentSemesterRoadmap((prev) =>
+          prev
+            ? {
+                ...prev,
+                progress: data.data,
+              }
+            : prev,
+        );
+      }
+
+      setCompletedRoadmapCache((prev) => {
+        if (!prev[semester]) return prev;
+
+        return {
+          ...prev,
+          [semester]: {
+            ...prev[semester],
+            progress: data.data,
+          },
+        };
+      });
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    }
+  };
+
   /*
    * ======================================================
    * LOADING
@@ -515,6 +657,8 @@ export default function Roadmap() {
                 {completedRoadmapCache[expandedCompletedSemester] && (
                   <SemesterDetails
                     roadmap={completedRoadmapCache[expandedCompletedSemester]}
+                    semester={expandedCompletedSemester}
+                    onProgressToggle={handleProgressToggle}
                   />
                 )}
               </div>
@@ -640,7 +784,11 @@ export default function Roadmap() {
 
                 {currentSemesterRoadmap && (
                   <>
-                    <SemesterDetails roadmap={currentSemesterRoadmap} />
+                    <SemesterDetails
+                      roadmap={currentSemesterRoadmap}
+                      semester={currentSemester}
+                      onProgressToggle={handleProgressToggle}
+                    />
 
                     <button
                       className="primary-button continue-button"
@@ -704,9 +852,59 @@ function CompletedSemesterCard({ semester, objective, expanded, onClick }) {
  * ========================================================
  */
 
-function SemesterDetails({ roadmap }) {
+function SemesterDetails({ roadmap, semester, onProgressToggle }) {
+  const progress =
+    roadmap?.progress && Object.keys(roadmap.progress || {}).length > 0
+      ? roadmap.progress
+      : buildProgressFallback(roadmap);
+
+  const totalItems = [
+    ...(progress.weeklyPlan || []).flatMap((week) => [
+      ...(week.topics || []),
+      ...(week.dsa || []),
+      ...(week.projectWork || []),
+    ]),
+    ...(progress.dailyPlan || []).flatMap((day) => [
+      ...(day.activities || []),
+      ...(day.dsa || []),
+      ...(day.collegeWork || []),
+    ]),
+    ...(progress.milestones || []),
+  ].length;
+
+  const completedItems = [
+    ...(progress.weeklyPlan || []).flatMap((week) => [
+      ...(week.topics || []),
+      ...(week.dsa || []),
+      ...(week.projectWork || []),
+    ]),
+    ...(progress.dailyPlan || []).flatMap((day) => [
+      ...(day.activities || []),
+      ...(day.dsa || []),
+      ...(day.collegeWork || []),
+    ]),
+    ...(progress.milestones || []),
+  ].filter(Boolean).length;
+
+  const progressPercent = totalItems === 0 ? 0 : Math.round((completedItems / totalItems) * 100);
+
   return (
     <div className="semester-content-wrapper">
+      <div className="progress-overview">
+        <div className="progress-header-row">
+          <span className="section-label">PROGRESS</span>
+          <strong>{progressPercent}% complete</strong>
+        </div>
+
+        <div className="progress-bar">
+          <span style={{ width: `${progressPercent}%` }} />
+        </div>
+
+        <small>
+          {completedItems} of {totalItems} tasks completed
+        </small>
+      </div>
+
       {/* ==================================================
           OBJECTIVE
       ================================================== */}
@@ -733,51 +931,110 @@ function SemesterDetails({ roadmap }) {
         </div>
 
         <div className="weekly-list">
-          {roadmap.weeklyPlan?.map((week, index) => (
-            <div className="week-card" key={index}>
-              <div className="week-number">W{week.week}</div>
+          {roadmap.weeklyPlan?.map((week, index) => {
+            const weekProgress = progress.weeklyPlan?.[index] || {
+              topics: Array((week.topics || []).length).fill(false),
+              dsa: Array((week.dsa || []).length).fill(false),
+              projectWork: Array((week.projectWork || []).length).fill(false),
+            };
 
-              <div className="week-main">
-                <h3>{week.focus}</h3>
+            return (
+              <div className="week-card" key={index}>
+                <div className="week-number">W{week.week}</div>
 
-                <div className="week-columns">
-                  <div>
-                    <span>TOPICS</span>
+                <div className="week-main">
+                  <h3>{week.focus}</h3>
 
-                    <ul>
-                      {week.topics?.map((item, i) => (
-                        <li key={i}>{item}</li>
-                      ))}
-                    </ul>
+                  <div className="week-columns">
+                    <div>
+                      <span>TOPICS</span>
+
+                      <ul>
+                        {week.topics?.map((item, i) => (
+                          <li key={i}>
+                            <label className="progress-item">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(weekProgress.topics?.[i])}
+                                onChange={(e) =>
+                                  onProgressToggle?.(semester, {
+                                    kind: "weekly",
+                                    index,
+                                    itemType: "topics",
+                                    itemIndex: i,
+                                    value: e.target.checked,
+                                  })
+                                }
+                              />
+                              <span>{item}</span>
+                            </label>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div>
+                      <span>DSA</span>
+
+                      <ul>
+                        {week.dsa?.map((item, i) => (
+                          <li key={i}>
+                            <label className="progress-item">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(weekProgress.dsa?.[i])}
+                                onChange={(e) =>
+                                  onProgressToggle?.(semester, {
+                                    kind: "weekly",
+                                    index,
+                                    itemType: "dsa",
+                                    itemIndex: i,
+                                    value: e.target.checked,
+                                  })
+                                }
+                              />
+                              <span>{item}</span>
+                            </label>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div>
+                      <span>PROJECT</span>
+
+                      <ul>
+                        {week.projectWork?.map((item, i) => (
+                          <li key={i}>
+                            <label className="progress-item">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(weekProgress.projectWork?.[i])}
+                                onChange={(e) =>
+                                  onProgressToggle?.(semester, {
+                                    kind: "weekly",
+                                    index,
+                                    itemType: "projectWork",
+                                    itemIndex: i,
+                                    value: e.target.checked,
+                                  })
+                                }
+                              />
+                              <span>{item}</span>
+                            </label>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
 
-                  <div>
-                    <span>DSA</span>
-
-                    <ul>
-                      {week.dsa?.map((item, i) => (
-                        <li key={i}>{item}</li>
-                      ))}
-                    </ul>
+                  <div className="week-outcome">
+                    <strong>Expected outcome:</strong> {week.expectedOutcome}
                   </div>
-
-                  <div>
-                    <span>PROJECT</span>
-
-                    <ul>
-                      {week.projectWork?.map((item, i) => (
-                        <li key={i}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="week-outcome">
-                  <strong>Expected outcome:</strong> {week.expectedOutcome}
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -799,59 +1056,118 @@ function SemesterDetails({ roadmap }) {
         </div>
 
         <div className="daily-list">
-          {roadmap.dailyPlan?.map((day, index) => (
-            <div className={`day-card ${day.dayType}`} key={index}>
-              <div className="day-date">
-                <strong>{formatDate(day.date)}</strong>
+          {roadmap.dailyPlan?.map((day, index) => {
+            const dayProgress = progress.dailyPlan?.[index] || {
+              activities: Array((day.activities || []).length).fill(false),
+              dsa: Array((day.dsa || []).length).fill(false),
+              collegeWork: Array((day.collegeWork || []).length).fill(false),
+            };
 
-                <span className={`day-badge ${day.dayType}`}>
-                  {formatDayType(day.dayType)}
-                </span>
+            return (
+              <div className={`day-card ${day.dayType}`} key={index}>
+                <div className="day-date">
+                  <strong>{formatDate(day.date)}</strong>
+
+                  <span className={`day-badge ${day.dayType}`}>
+                    {formatDayType(day.dayType)}
+                  </span>
+                </div>
+
+                <div className="day-hours">{day.availableHours}h</div>
+
+                <div className="day-activities">
+                  {day.activities?.length > 0 && (
+                    <div>
+                      <span>CAREER WORK</span>
+
+                      <ul>
+                        {day.activities.map((item, i) => (
+                          <li key={i}>
+                            <label className="progress-item">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(dayProgress.activities?.[i])}
+                                onChange={(e) =>
+                                  onProgressToggle?.(semester, {
+                                    kind: "daily",
+                                    index,
+                                    itemType: "activities",
+                                    itemIndex: i,
+                                    value: e.target.checked,
+                                  })
+                                }
+                              />
+                              <span>{item}</span>
+                            </label>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {day.dsa?.length > 0 && (
+                    <div>
+                      <span>DSA</span>
+
+                      <ul>
+                        {day.dsa.map((item, i) => (
+                          <li key={i}>
+                            <label className="progress-item">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(dayProgress.dsa?.[i])}
+                                onChange={(e) =>
+                                  onProgressToggle?.(semester, {
+                                    kind: "daily",
+                                    index,
+                                    itemType: "dsa",
+                                    itemIndex: i,
+                                    value: e.target.checked,
+                                  })
+                                }
+                              />
+                              <span>{item}</span>
+                            </label>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {day.collegeWork?.length > 0 && (
+                    <div>
+                      <span>COLLEGE</span>
+
+                      <ul>
+                        {day.collegeWork.map((item, i) => (
+                          <li key={i}>
+                            <label className="progress-item">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(dayProgress.collegeWork?.[i])}
+                                onChange={(e) =>
+                                  onProgressToggle?.(semester, {
+                                    kind: "daily",
+                                    index,
+                                    itemType: "collegeWork",
+                                    itemIndex: i,
+                                    value: e.target.checked,
+                                  })
+                                }
+                              />
+                              <span>{item}</span>
+                            </label>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {day.notes && <p className="day-note">{day.notes}</p>}
+                </div>
               </div>
-
-              <div className="day-hours">{day.availableHours}h</div>
-
-              <div className="day-activities">
-                {day.activities?.length > 0 && (
-                  <div>
-                    <span>CAREER WORK</span>
-
-                    <ul>
-                      {day.activities.map((item, i) => (
-                        <li key={i}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {day.dsa?.length > 0 && (
-                  <div>
-                    <span>DSA</span>
-
-                    <ul>
-                      {day.dsa.map((item, i) => (
-                        <li key={i}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {day.collegeWork?.length > 0 && (
-                  <div>
-                    <span>COLLEGE</span>
-
-                    <ul>
-                      {day.collegeWork.map((item, i) => (
-                        <li key={i}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {day.notes && <p className="day-note">{day.notes}</p>}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -871,11 +1187,22 @@ function SemesterDetails({ roadmap }) {
 
           <div className="milestones">
             {roadmap.milestones.map((milestone, index) => (
-              <div className="milestone" key={index}>
-                <div className="milestone-check">✓</div>
+              <label className="milestone" key={index}>
+                <input
+                  type="checkbox"
+                  checked={Boolean(progress.milestones?.[index])}
+                  onChange={(e) =>
+                    onProgressToggle?.(semester, {
+                      kind: "milestone",
+                      index: 0,
+                      itemIndex: index,
+                      value: e.target.checked,
+                    })
+                  }
+                />
 
                 <span>{milestone}</span>
-              </div>
+              </label>
             ))}
           </div>
         </section>
@@ -903,6 +1230,30 @@ function SemesterDetails({ roadmap }) {
  * HELPERS
  * ========================================================
  */
+
+function buildProgressFallback(roadmap) {
+  if (!roadmap) {
+    return { weeklyPlan: [], dailyPlan: [], milestones: [] };
+  }
+
+  return {
+    weeklyPlan: (roadmap.weeklyPlan || []).map((week) => ({
+      week: week.week ?? 0,
+      completed: false,
+      topics: Array((week.topics || []).length).fill(false),
+      dsa: Array((week.dsa || []).length).fill(false),
+      projectWork: Array((week.projectWork || []).length).fill(false),
+    })),
+    dailyPlan: (roadmap.dailyPlan || []).map((day) => ({
+      date: day.date || "",
+      completed: false,
+      activities: Array((day.activities || []).length).fill(false),
+      dsa: Array((day.dsa || []).length).fill(false),
+      collegeWork: Array((day.collegeWork || []).length).fill(false),
+    })),
+    milestones: Array((roadmap.milestones || []).length).fill(false),
+  };
+}
 
 function formatDate(date) {
   if (!date) return "";
