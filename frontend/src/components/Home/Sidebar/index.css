@@ -156,6 +156,8 @@
   color: var(--sb-text-dim);
 
   text-decoration: none;
+  text-align: left;
+  font-family: inherit;
 
   font-size: 13px;
   font-weight: 500;
