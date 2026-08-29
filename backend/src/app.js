@@ -36,7 +36,8 @@ const frontendBuildPath = path.join(__dirname, "../../frontend/build");
 app.use(express.static(frontendBuildPath));
 
 // 2. Fallback route: Send index.html for non-API requests (handles React SPA routing)
-app.get("*", (req, res) => {
+// Express 5 rejects bare '*' patterns, so use a regex-based catch-all instead.
+app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(frontendBuildPath, "index.html"));
 });
 
