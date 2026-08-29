@@ -12,10 +12,26 @@ const connectDB = require("./config/database");
 const app = express();
 
 // Middleware
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://nextstep-bflm.onrender.com",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
   }),
 );
 app.use(express.json());
