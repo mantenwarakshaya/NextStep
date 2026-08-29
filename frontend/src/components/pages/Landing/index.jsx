@@ -396,7 +396,11 @@ export default function NextStepApp() {
               NextStep — Career Guidance &amp; Personalized Semester-Wise Road
               Map Platform
             </span>
-            <span className="mono">Final Year Project</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <span className="mono">@copyright 2026 NextStep. All rights reserved.</span>
+              {/* <span style={{ width: "1px", height: "14px", background: "rgba(255, 255, 255, 0.1)" }}></span> */}
+              <span>@crafted by Mantenwar Akshaya</span>
+            </div>
           </div>
         </footer>
       </div>
