@@ -5,7 +5,7 @@ import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import "./index.css";
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:7777";
+  process.env.REACT_APP_API_BASE_URL || "https://nextstep-backend.onrender.com";
 
 const getApiErrorMessage = (
   err,
