@@ -36,11 +36,17 @@
   --warning-bg: #fffbeb;
   --warning: #b45309;
 
+  --accent: #4f46e5;
+  --accent-strong: #4338ca;
+  --accent-soft: #eef2ff;
+  --accent-soft-border: #e0e7ff;
+
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
 
   --shadow-hover: 0 4px 16px rgba(15, 23, 42, 0.06);
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04);
 
   min-height: 100vh;
   background: var(--bg);
@@ -260,8 +266,8 @@
 }
 
 .completed-semester-card.expanded {
-  border-color: var(--ink);
-  background: var(--surface);
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .completed-check {
@@ -318,8 +324,8 @@
 
   border-radius: var(--radius-sm);
 
-  background: var(--info-bg);
-  color: var(--info);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
 
   font-size: 9px;
   font-weight: 600;
@@ -484,10 +490,9 @@
 
 .input-group input:focus,
 .input-group textarea:focus {
-  border-color: var(--ink);
+  border-color: var(--accent);
 
-  box-shadow:
-    0 0 0 3px rgba(15, 23, 42, 0.07);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .input-group textarea {
@@ -543,6 +548,105 @@
   cursor: not-allowed;
 }
 
+.secondary-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 36px;
+  padding: 0 14px;
+
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+
+  background: var(--surface);
+  color: var(--slate);
+
+  font-size: 12.5px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.secondary-button:hover:not(:disabled) {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.secondary-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+
+/* ======================================================
+   EDIT TOGGLE
+   ====================================================== */
+
+.edit-toggle-button {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+  padding: 7px 14px;
+
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+
+  background: var(--surface);
+  color: var(--slate);
+
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.edit-toggle-button:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.edit-toggle-button.editing {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.edit-toggle-button.editing:hover {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+}
+
+.edit-toggle-icon {
+  font-size: 11px;
+}
+
+.edit-mode-banner {
+  margin-top: 12px;
+  padding: 9px 12px;
+
+  border: 1px solid var(--accent-soft-border);
+  border-radius: var(--radius-sm);
+
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
 
 /* ======================================================
    OBJECTIVE
@@ -553,6 +657,74 @@
   flex-direction: column;
 
   gap: 36px;
+}
+
+
+/* ======================================================
+   PROGRESS OVERVIEW
+   ====================================================== */
+
+.progress-overview {
+  padding: 18px 22px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-card);
+}
+
+.progress-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.progress-header-row > div {
+  display: flex;
+  align-items: baseline;
+
+  gap: 10px;
+}
+
+.progress-header-row strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.progress-bar {
+  position: relative;
+
+  width: 100%;
+  height: 8px;
+
+  border-radius: 999px;
+  overflow: hidden;
+
+  background: var(--surface-subtle);
+}
+
+.progress-bar span {
+  display: block;
+  height: 100%;
+
+  border-radius: 999px;
+
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-strong) 100%);
+
+  transition: width 0.3s ease;
+}
+
+.progress-overview small {
+  display: block;
+  margin-top: 8px;
+
+  color: var(--muted);
+  font-size: 11.5px;
 }
 
 .objective-card {
@@ -760,6 +932,152 @@
   padding-left: 0;
 }
 
+/* Checked items read as done: dim + strike-through */
+.progress-item:has(input:checked) span {
+  color: var(--faint);
+  text-decoration: line-through;
+  text-decoration-color: var(--border-strong);
+}
+
+.checklist-empty {
+  margin: 0;
+
+  color: var(--faint);
+  font-size: 11.5px;
+  font-style: italic;
+}
+
+
+/* ======================================================
+   EDITABLE LIST (edit mode)
+   ====================================================== */
+
+.editable-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.editable-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 10px;
+  padding: 7px 10px;
+
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+
+  background: var(--accent-soft);
+
+  font-size: 12px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+
+.editable-item span {
+  flex: 1;
+  min-width: 0;
+
+  word-break: break-word;
+}
+
+.editable-actions {
+  display: flex;
+  flex-shrink: 0;
+
+  gap: 4px;
+}
+
+.editable-actions button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+
+  border: 1px solid var(--accent-soft-border);
+  border-radius: 5px;
+
+  background: var(--surface);
+  color: var(--accent-strong);
+
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.editable-actions button:hover:not(:disabled) {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.editable-actions button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.compact-actions {
+  margin-top: 6px;
+}
+
+.editable-input-row {
+  display: flex;
+
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.editable-input-row input {
+  flex: 1;
+  min-width: 0;
+
+  padding: 6px 9px;
+
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+
+  outline: none;
+
+  background: var(--surface);
+  color: var(--ink);
+
+  font-family: inherit;
+  font-size: 12px;
+
+  transition: border-color 0.15s ease;
+}
+
+.editable-input-row input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.editable-input-row .secondary-button {
+  flex-shrink: 0;
+
+  min-height: 0;
+  padding: 0 12px;
+
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+.editable-input-row .secondary-button:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-strong);
+}
+
 
 /* ======================================================
    WEEK OUTCOME
@@ -882,6 +1200,52 @@
 
 
 /* ======================================================
+   COLLAPSED DAY RANGE (consecutive exam / break days)
+   ====================================================== */
+
+.day-range-card {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 12px;
+  padding: 10px 20px;
+
+  background: var(--surface-flat);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+}
+
+.day-range-card strong {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--slate);
+}
+
+.day-range-count {
+  color: var(--faint);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.day-range-note {
+  margin-left: auto;
+
+  color: var(--muted);
+  font-size: 11.5px;
+  font-style: italic;
+}
+
+.day-range-card.college_exam {
+  border-color: var(--danger-border);
+}
+
+.day-range-card.pre_exam_break {
+  border-color: #fde68a;
+}
+
+
+/* ======================================================
    MILESTONES
    ====================================================== */
 
@@ -908,25 +1272,40 @@
 
   font-size: 13px;
   line-height: 1.5;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
 }
 
-.milestone-check {
+.milestone:hover {
+  border-color: var(--border-strong);
+}
+
+.milestone input[type="checkbox"] {
   flex-shrink: 0;
 
-  width: 22px;
-  height: 22px;
+  width: 16px;
+  height: 16px;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin: 0;
 
-  border-radius: 50%;
+  cursor: pointer;
 
-  background: var(--surface-subtle);
-  color: var(--slate-muted);
+  accent-color: var(--accent);
+}
 
-  font-size: 11px;
-  font-weight: 700;
+.milestone:has(input:checked) {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft-border);
+}
+
+.milestone:has(input:checked) span {
+  color: var(--accent-strong);
+  text-decoration: line-through;
+  text-decoration-color: var(--border-strong);
 }
 
 
@@ -1194,5 +1573,13 @@
 
   .objective-card h2 {
     font-size: 18px;
+  }
+
+  .progress-header-row {
+    flex-wrap: wrap;
+  }
+
+  .editable-item {
+    flex-wrap: wrap;
   }
 }

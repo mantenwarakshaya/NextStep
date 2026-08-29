@@ -484,6 +484,41 @@ export default function Roadmap() {
     }
   };
 
+  const handleRoadmapEdit = async (semester, payload) => {
+    try {
+      setError("");
+
+      const response = await fetch(`${BASE_URL}/api/roadmap/semester/${semester}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Could not update roadmap.");
+      }
+
+      const updatedRoadmap = data.data;
+
+      if (currentSemester === semester) {
+        setCurrentSemesterRoadmap(updatedRoadmap);
+      }
+
+      setCompletedRoadmapCache((prev) => ({
+        ...prev,
+        [semester]: updatedRoadmap,
+      }));
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    }
+  };
+
   /*
    * ======================================================
    * LOADING
@@ -659,6 +694,7 @@ export default function Roadmap() {
                     roadmap={completedRoadmapCache[expandedCompletedSemester]}
                     semester={expandedCompletedSemester}
                     onProgressToggle={handleProgressToggle}
+                    onRoadmapEdit={handleRoadmapEdit}
                   />
                 )}
               </div>
@@ -788,6 +824,7 @@ export default function Roadmap() {
                       roadmap={currentSemesterRoadmap}
                       semester={currentSemester}
                       onProgressToggle={handleProgressToggle}
+                      onRoadmapEdit={handleRoadmapEdit}
                     />
 
                     <button
@@ -852,7 +889,9 @@ function CompletedSemesterCard({ semester, objective, expanded, onClick }) {
  * ========================================================
  */
 
-function SemesterDetails({ roadmap, semester, onProgressToggle }) {
+function SemesterDetails({ roadmap, semester, onProgressToggle, onRoadmapEdit }) {
+  const [isEditing, setIsEditing] = useState(false);
+
   const progress =
     roadmap?.progress && Object.keys(roadmap.progress || {}).length > 0
       ? roadmap.progress
@@ -892,8 +931,26 @@ function SemesterDetails({ roadmap, semester, onProgressToggle }) {
     <div className="semester-content-wrapper">
       <div className="progress-overview">
         <div className="progress-header-row">
-          <span className="section-label">PROGRESS</span>
-          <strong>{progressPercent}% complete</strong>
+          <div>
+            <span className="section-label">PROGRESS</span>
+            <strong>{progressPercent}% complete</strong>
+          </div>
+
+          <button
+            type="button"
+            className={isEditing ? "edit-toggle-button editing" : "edit-toggle-button"}
+            onClick={() => setIsEditing((prev) => !prev)}
+          >
+            {isEditing ? (
+              <>
+                <span className="edit-toggle-icon">✓</span> Save
+              </>
+            ) : (
+              <>
+                <span className="edit-toggle-icon">✎</span> Edit
+              </>
+            )}
+          </button>
         </div>
 
         <div className="progress-bar">
@@ -903,6 +960,12 @@ function SemesterDetails({ roadmap, semester, onProgressToggle }) {
         <small>
           {completedItems} of {totalItems} tasks completed
         </small>
+
+        {isEditing && (
+          <div className="edit-mode-banner">
+            Editing roadmap — reorder, add or remove items below, then Save.
+          </div>
+        )}
       </div>
 
       {/* ==================================================
@@ -949,82 +1012,145 @@ function SemesterDetails({ roadmap, semester, onProgressToggle }) {
                     <div>
                       <span>TOPICS</span>
 
-                      <ul>
-                        {week.topics?.map((item, i) => (
-                          <li key={i}>
-                            <label className="progress-item">
-                              <input
-                                type="checkbox"
-                                checked={Boolean(weekProgress.topics?.[i])}
-                                onChange={(e) =>
-                                  onProgressToggle?.(semester, {
-                                    kind: "weekly",
-                                    index,
-                                    itemType: "topics",
-                                    itemIndex: i,
-                                    value: e.target.checked,
-                                  })
-                                }
-                              />
-                              <span>{item}</span>
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
+                      <TaskChecklist
+                        items={week.topics || []}
+                        progress={weekProgress.topics}
+                        isEditing={isEditing}
+                        placeholder="Add a topic"
+                        onToggle={(itemIndex, value) =>
+                          onProgressToggle?.(semester, {
+                            kind: "weekly",
+                            index,
+                            itemType: "topics",
+                            itemIndex,
+                            value,
+                          })
+                        }
+                        onAdd={(value) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "weeklyPlan",
+                            weekIndex: index,
+                            field: "topics",
+                            action: "add",
+                            value,
+                          })
+                        }
+                        onRemove={(itemIndex) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "weeklyPlan",
+                            weekIndex: index,
+                            field: "topics",
+                            action: "remove",
+                            itemIndex,
+                          })
+                        }
+                        onMove={(itemIndex, direction) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "weeklyPlan",
+                            weekIndex: index,
+                            field: "topics",
+                            action: "move",
+                            itemIndex,
+                            direction,
+                          })
+                        }
+                      />
                     </div>
 
                     <div>
                       <span>DSA</span>
 
-                      <ul>
-                        {week.dsa?.map((item, i) => (
-                          <li key={i}>
-                            <label className="progress-item">
-                              <input
-                                type="checkbox"
-                                checked={Boolean(weekProgress.dsa?.[i])}
-                                onChange={(e) =>
-                                  onProgressToggle?.(semester, {
-                                    kind: "weekly",
-                                    index,
-                                    itemType: "dsa",
-                                    itemIndex: i,
-                                    value: e.target.checked,
-                                  })
-                                }
-                              />
-                              <span>{item}</span>
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
+                      <TaskChecklist
+                        items={week.dsa || []}
+                        progress={weekProgress.dsa}
+                        isEditing={isEditing}
+                        placeholder="Add DSA task"
+                        onToggle={(itemIndex, value) =>
+                          onProgressToggle?.(semester, {
+                            kind: "weekly",
+                            index,
+                            itemType: "dsa",
+                            itemIndex,
+                            value,
+                          })
+                        }
+                        onAdd={(value) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "weeklyPlan",
+                            weekIndex: index,
+                            field: "dsa",
+                            action: "add",
+                            value,
+                          })
+                        }
+                        onRemove={(itemIndex) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "weeklyPlan",
+                            weekIndex: index,
+                            field: "dsa",
+                            action: "remove",
+                            itemIndex,
+                          })
+                        }
+                        onMove={(itemIndex, direction) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "weeklyPlan",
+                            weekIndex: index,
+                            field: "dsa",
+                            action: "move",
+                            itemIndex,
+                            direction,
+                          })
+                        }
+                      />
                     </div>
 
                     <div>
                       <span>PROJECT</span>
 
-                      <ul>
-                        {week.projectWork?.map((item, i) => (
-                          <li key={i}>
-                            <label className="progress-item">
-                              <input
-                                type="checkbox"
-                                checked={Boolean(weekProgress.projectWork?.[i])}
-                                onChange={(e) =>
-                                  onProgressToggle?.(semester, {
-                                    kind: "weekly",
-                                    index,
-                                    itemType: "projectWork",
-                                    itemIndex: i,
-                                    value: e.target.checked,
-                                  })
-                                }
-                              />
-                              <span>{item}</span>
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
+                      <TaskChecklist
+                        items={week.projectWork || []}
+                        progress={weekProgress.projectWork}
+                        isEditing={isEditing}
+                        placeholder="Add project task"
+                        onToggle={(itemIndex, value) =>
+                          onProgressToggle?.(semester, {
+                            kind: "weekly",
+                            index,
+                            itemType: "projectWork",
+                            itemIndex,
+                            value,
+                          })
+                        }
+                        onAdd={(value) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "weeklyPlan",
+                            weekIndex: index,
+                            field: "projectWork",
+                            action: "add",
+                            value,
+                          })
+                        }
+                        onRemove={(itemIndex) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "weeklyPlan",
+                            weekIndex: index,
+                            field: "projectWork",
+                            action: "remove",
+                            itemIndex,
+                          })
+                        }
+                        onMove={(itemIndex, direction) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "weeklyPlan",
+                            weekIndex: index,
+                            field: "projectWork",
+                            action: "move",
+                            itemIndex,
+                            direction,
+                          })
+                        }
+                      />
                     </div>
                   </div>
 
@@ -1056,7 +1182,31 @@ function SemesterDetails({ roadmap, semester, onProgressToggle }) {
         </div>
 
         <div className="daily-list">
-          {roadmap.dailyPlan?.map((day, index) => {
+          {groupDailyPlan(roadmap.dailyPlan || []).map((group, gIndex) => {
+            if (group.type === "range") {
+              return (
+                <div
+                  className={`day-range-card ${group.dayType}`}
+                  key={`range-${gIndex}`}
+                >
+                  <span className={`day-badge ${group.dayType}`}>
+                    {formatDayType(group.dayType)}
+                  </span>
+
+                  <strong>
+                    {formatDate(group.startDate)} – {formatDate(group.endDate)}
+                  </strong>
+
+                  <span className="day-range-count">{group.count} days</span>
+
+                  {group.notes && (
+                    <span className="day-range-note">{group.notes}</span>
+                  )}
+                </div>
+              );
+            }
+
+            const { day, index } = group;
             const dayProgress = progress.dailyPlan?.[index] || {
               activities: Array((day.activities || []).length).fill(false),
               dsa: Array((day.dsa || []).length).fill(false),
@@ -1080,28 +1230,49 @@ function SemesterDetails({ roadmap, semester, onProgressToggle }) {
                     <div>
                       <span>CAREER WORK</span>
 
-                      <ul>
-                        {day.activities.map((item, i) => (
-                          <li key={i}>
-                            <label className="progress-item">
-                              <input
-                                type="checkbox"
-                                checked={Boolean(dayProgress.activities?.[i])}
-                                onChange={(e) =>
-                                  onProgressToggle?.(semester, {
-                                    kind: "daily",
-                                    index,
-                                    itemType: "activities",
-                                    itemIndex: i,
-                                    value: e.target.checked,
-                                  })
-                                }
-                              />
-                              <span>{item}</span>
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
+                      <TaskChecklist
+                        items={day.activities || []}
+                        progress={dayProgress.activities}
+                        isEditing={isEditing}
+                        placeholder="Add work item"
+                        onToggle={(itemIndex, value) =>
+                          onProgressToggle?.(semester, {
+                            kind: "daily",
+                            index,
+                            itemType: "activities",
+                            itemIndex,
+                            value,
+                          })
+                        }
+                        onAdd={(value) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "dailyPlan",
+                            dayIndex: index,
+                            field: "activities",
+                            action: "add",
+                            value,
+                          })
+                        }
+                        onRemove={(itemIndex) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "dailyPlan",
+                            dayIndex: index,
+                            field: "activities",
+                            action: "remove",
+                            itemIndex,
+                          })
+                        }
+                        onMove={(itemIndex, direction) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "dailyPlan",
+                            dayIndex: index,
+                            field: "activities",
+                            action: "move",
+                            itemIndex,
+                            direction,
+                          })
+                        }
+                      />
                     </div>
                   )}
 
@@ -1109,28 +1280,49 @@ function SemesterDetails({ roadmap, semester, onProgressToggle }) {
                     <div>
                       <span>DSA</span>
 
-                      <ul>
-                        {day.dsa.map((item, i) => (
-                          <li key={i}>
-                            <label className="progress-item">
-                              <input
-                                type="checkbox"
-                                checked={Boolean(dayProgress.dsa?.[i])}
-                                onChange={(e) =>
-                                  onProgressToggle?.(semester, {
-                                    kind: "daily",
-                                    index,
-                                    itemType: "dsa",
-                                    itemIndex: i,
-                                    value: e.target.checked,
-                                  })
-                                }
-                              />
-                              <span>{item}</span>
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
+                      <TaskChecklist
+                        items={day.dsa || []}
+                        progress={dayProgress.dsa}
+                        isEditing={isEditing}
+                        placeholder="Add DSA task"
+                        onToggle={(itemIndex, value) =>
+                          onProgressToggle?.(semester, {
+                            kind: "daily",
+                            index,
+                            itemType: "dsa",
+                            itemIndex,
+                            value,
+                          })
+                        }
+                        onAdd={(value) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "dailyPlan",
+                            dayIndex: index,
+                            field: "dsa",
+                            action: "add",
+                            value,
+                          })
+                        }
+                        onRemove={(itemIndex) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "dailyPlan",
+                            dayIndex: index,
+                            field: "dsa",
+                            action: "remove",
+                            itemIndex,
+                          })
+                        }
+                        onMove={(itemIndex, direction) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "dailyPlan",
+                            dayIndex: index,
+                            field: "dsa",
+                            action: "move",
+                            itemIndex,
+                            direction,
+                          })
+                        }
+                      />
                     </div>
                   )}
 
@@ -1138,28 +1330,49 @@ function SemesterDetails({ roadmap, semester, onProgressToggle }) {
                     <div>
                       <span>COLLEGE</span>
 
-                      <ul>
-                        {day.collegeWork.map((item, i) => (
-                          <li key={i}>
-                            <label className="progress-item">
-                              <input
-                                type="checkbox"
-                                checked={Boolean(dayProgress.collegeWork?.[i])}
-                                onChange={(e) =>
-                                  onProgressToggle?.(semester, {
-                                    kind: "daily",
-                                    index,
-                                    itemType: "collegeWork",
-                                    itemIndex: i,
-                                    value: e.target.checked,
-                                  })
-                                }
-                              />
-                              <span>{item}</span>
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
+                      <TaskChecklist
+                        items={day.collegeWork || []}
+                        progress={dayProgress.collegeWork}
+                        isEditing={isEditing}
+                        placeholder="Add college task"
+                        onToggle={(itemIndex, value) =>
+                          onProgressToggle?.(semester, {
+                            kind: "daily",
+                            index,
+                            itemType: "collegeWork",
+                            itemIndex,
+                            value,
+                          })
+                        }
+                        onAdd={(value) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "dailyPlan",
+                            dayIndex: index,
+                            field: "collegeWork",
+                            action: "add",
+                            value,
+                          })
+                        }
+                        onRemove={(itemIndex) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "dailyPlan",
+                            dayIndex: index,
+                            field: "collegeWork",
+                            action: "remove",
+                            itemIndex,
+                          })
+                        }
+                        onMove={(itemIndex, direction) =>
+                          onRoadmapEdit?.(semester, {
+                            section: "dailyPlan",
+                            dayIndex: index,
+                            field: "collegeWork",
+                            action: "move",
+                            itemIndex,
+                            direction,
+                          })
+                        }
+                      />
                     </div>
                   )}
 
@@ -1185,26 +1398,55 @@ function SemesterDetails({ roadmap, semester, onProgressToggle }) {
             </div>
           </div>
 
-          <div className="milestones">
-            {roadmap.milestones.map((milestone, index) => (
-              <label className="milestone" key={index}>
-                <input
-                  type="checkbox"
-                  checked={Boolean(progress.milestones?.[index])}
-                  onChange={(e) =>
-                    onProgressToggle?.(semester, {
-                      kind: "milestone",
-                      index: 0,
-                      itemIndex: index,
-                      value: e.target.checked,
-                    })
-                  }
-                />
+          {isEditing ? (
+            <EditableList
+              items={roadmap.milestones || []}
+              placeholder="Add a milestone"
+              onAdd={(value) =>
+                onRoadmapEdit?.(semester, {
+                  section: "milestones",
+                  action: "add",
+                  value,
+                })
+              }
+              onRemove={(itemIndex) =>
+                onRoadmapEdit?.(semester, {
+                  section: "milestones",
+                  action: "remove",
+                  itemIndex,
+                })
+              }
+              onMove={(itemIndex, direction) =>
+                onRoadmapEdit?.(semester, {
+                  section: "milestones",
+                  action: "move",
+                  itemIndex,
+                  direction,
+                })
+              }
+            />
+          ) : (
+            <div className="milestones">
+              {roadmap.milestones.map((milestone, index) => (
+                <label className="milestone" key={index}>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(progress.milestones?.[index])}
+                    onChange={(e) =>
+                      onProgressToggle?.(semester, {
+                        kind: "milestone",
+                        index: 0,
+                        itemIndex: index,
+                        value: e.target.checked,
+                      })
+                    }
+                  />
 
-                <span>{milestone}</span>
-              </label>
-            ))}
-          </div>
+                  <span>{milestone}</span>
+                </label>
+              ))}
+            </div>
+          )}
         </section>
       )}
 
@@ -1230,6 +1472,151 @@ function SemesterDetails({ roadmap, semester, onProgressToggle }) {
  * HELPERS
  * ========================================================
  */
+
+function TaskChecklist({
+  items = [],
+  progress = [],
+  isEditing,
+  placeholder = "Add an item",
+  onToggle,
+  onAdd,
+  onRemove,
+  onMove,
+}) {
+  if (isEditing) {
+    return (
+      <EditableList
+        items={items}
+        placeholder={placeholder}
+        onAdd={onAdd}
+        onRemove={onRemove}
+        onMove={onMove}
+      />
+    );
+  }
+
+  if (!items.length) {
+    return <p className="checklist-empty">Nothing here yet.</p>;
+  }
+
+  return (
+    <ul className="progress-list">
+      {items.map((item, i) => (
+        <li key={i}>
+          <label className="progress-item">
+            <input
+              type="checkbox"
+              checked={Boolean(progress?.[i])}
+              onChange={(e) => onToggle?.(i, e.target.checked)}
+            />
+            <span>{item}</span>
+          </label>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function EditableList({ items = [], placeholder = "Add an item", onAdd, onRemove, onMove }) {
+  const [draft, setDraft] = useState("");
+
+  return (
+    <div className="editable-list">
+      {items.map((item, index) => (
+        <div className="editable-item" key={`${item}-${index}`}>
+          <span>{item}</span>
+
+          <div className="editable-actions">
+            <button
+              type="button"
+              onClick={() => onMove?.(index, -1)}
+              disabled={index === 0}
+            >
+              ↑
+            </button>
+            <button
+              type="button"
+              onClick={() => onMove?.(index, 1)}
+              disabled={index === items.length - 1}
+            >
+              ↓
+            </button>
+            <button type="button" onClick={() => onRemove?.(index)}>
+              Remove
+            </button>
+          </div>
+        </div>
+      ))}
+
+      <div className="editable-input-row">
+        <input
+          type="text"
+          value={draft}
+          placeholder={placeholder}
+          onChange={(e) => setDraft(e.target.value)}
+        />
+
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={() => {
+            const value = draft.trim();
+            if (!value) return;
+            onAdd?.(value);
+            setDraft("");
+          }}
+        >
+          Add
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function groupDailyPlan(dailyPlan = []) {
+  const groups = [];
+  let i = 0;
+
+  const isPlaceholder = (day) =>
+    day.dayType !== "normal" &&
+    !(day.activities?.length || day.dsa?.length || day.collegeWork?.length);
+
+  while (i < dailyPlan.length) {
+    const day = dailyPlan[i];
+
+    if (isPlaceholder(day)) {
+      let j = i + 1;
+
+      while (
+        j < dailyPlan.length &&
+        dailyPlan[j].dayType === day.dayType &&
+        isPlaceholder(dailyPlan[j])
+      ) {
+        j += 1;
+      }
+
+      if (j - i > 1) {
+        groups.push({
+          type: "range",
+          dayType: day.dayType,
+          startDate: day.date,
+          endDate: dailyPlan[j - 1].date,
+          notes: day.notes,
+          count: j - i,
+        });
+      } else {
+        groups.push({ type: "day", day, index: i });
+      }
+
+      i = j;
+    } else {
+      groups.push({ type: "day", day, index: i });
+      i += 1;
+    }
+  }
+
+  return groups;
+}
 
 function buildProgressFallback(roadmap) {
   if (!roadmap) {

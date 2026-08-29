@@ -43,6 +43,92 @@ const buildProgressState = (roadmap = {}) => {
   };
 };
 
+const syncProgressWithRoadmap = (roadmap) => {
+  const baseProgress = roadmap.progress || buildProgressState(roadmap);
+
+  const syncBooleanArray = (source = [], targetLength = 0) => {
+    const updated = Array.isArray(source) ? [...source] : [];
+
+    while (updated.length < targetLength) {
+      updated.push(false);
+    }
+
+    if (updated.length > targetLength) {
+      updated.length = targetLength;
+    }
+
+    return updated;
+  };
+
+  const weeklyPlan = (roadmap.weeklyPlan || []).map((week, index) => {
+    const current = baseProgress.weeklyPlan?.[index] || {
+      week: week.week ?? index + 1,
+      completed: false,
+      topics: [],
+      dsa: [],
+      projectWork: [],
+    };
+
+    const topics = syncBooleanArray(current.topics, (week.topics || []).length);
+    const dsa = syncBooleanArray(current.dsa, (week.dsa || []).length);
+    const projectWork = syncBooleanArray(
+      current.projectWork,
+      (week.projectWork || []).length,
+    );
+
+    const combined = [...topics, ...dsa, ...projectWork];
+
+    return {
+      week: week.week ?? index + 1,
+      completed: combined.length > 0 ? combined.every(Boolean) : false,
+      topics,
+      dsa,
+      projectWork,
+    };
+  });
+
+  const dailyPlan = (roadmap.dailyPlan || []).map((day, index) => {
+    const current = baseProgress.dailyPlan?.[index] || {
+      date: day.date || "",
+      completed: false,
+      activities: [],
+      dsa: [],
+      collegeWork: [],
+    };
+
+    const activities = syncBooleanArray(
+      current.activities,
+      (day.activities || []).length,
+    );
+    const dsa = syncBooleanArray(current.dsa, (day.dsa || []).length);
+    const collegeWork = syncBooleanArray(
+      current.collegeWork,
+      (day.collegeWork || []).length,
+    );
+
+    const combined = [...activities, ...dsa, ...collegeWork];
+
+    return {
+      date: day.date || "",
+      completed: combined.length > 0 ? combined.every(Boolean) : false,
+      activities,
+      dsa,
+      collegeWork,
+    };
+  });
+
+  const milestones = syncBooleanArray(
+    baseProgress.milestones,
+    (roadmap.milestones || []).length,
+  );
+
+  return {
+    weeklyPlan,
+    dailyPlan,
+    milestones,
+  };
+};
+
 const padBooleanArray = (arr, length) => {
   const base = Array.isArray(arr) ? arr.slice(0, length).map(Boolean) : [];
   while (base.length < length) base.push(false);
@@ -316,6 +402,221 @@ const generateSemester = async (req, res) => {
 };
 
 // ======================================================
+// CUSTOMIZE ROADMAP
+// ======================================================
+
+const updateSemesterRoadmap = async (req, res) => {
+  try {
+    const semester = Number(req.params.semester);
+    const { section, weekIndex, dayIndex, field, action, itemIndex, value, direction } = req.body;
+
+    if (!section || !action) {
+      return res.status(400).json({
+        success: false,
+        message: "Roadmap update is missing required fields.",
+      });
+    }
+
+    const roadmap = await SemesterRoadmap.findOne({
+      userId: req.user._id,
+      semester,
+    });
+
+    if (!roadmap) {
+      return res.status(404).json({
+        success: false,
+        message: `Semester ${semester} roadmap not found.`,
+      });
+    }
+
+    if (section === "weeklyPlan") {
+      const week = roadmap.weeklyPlan[weekIndex];
+
+      if (!week) {
+        return res.status(400).json({
+          success: false,
+          message: "Week not found in this roadmap.",
+        });
+      }
+
+      const items = week[field];
+
+      if (!Array.isArray(items)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid weekly field.",
+        });
+      }
+
+      if (action === "add") {
+        const trimmed = String(value || "").trim();
+
+        if (!trimmed) {
+          return res.status(400).json({
+            success: false,
+            message: "Please enter a value before adding it.",
+          });
+        }
+
+        items.push(trimmed);
+      } else if (action === "remove") {
+        if (!Number.isInteger(itemIndex) || itemIndex < 0 || itemIndex >= items.length) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid item index.",
+          });
+        }
+
+        items.splice(itemIndex, 1);
+      } else if (action === "move") {
+        if (!Number.isInteger(itemIndex) || itemIndex < 0 || itemIndex >= items.length) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid item index.",
+          });
+        }
+
+        const directionValue = Number(direction) || 0;
+        const newIndex = itemIndex + directionValue;
+
+        if (newIndex < 0 || newIndex >= items.length) {
+          return res.status(400).json({
+            success: false,
+            message: "Item cannot move outside the list.",
+          });
+        }
+
+        const [item] = items.splice(itemIndex, 1);
+        items.splice(newIndex, 0, item);
+      }
+    } else if (section === "dailyPlan") {
+      const day = roadmap.dailyPlan[dayIndex];
+
+      if (!day) {
+        return res.status(400).json({
+          success: false,
+          message: "Day not found in this roadmap.",
+        });
+      }
+
+      const items = day[field];
+
+      if (!Array.isArray(items)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid daily field.",
+        });
+      }
+
+      if (action === "add") {
+        const trimmed = String(value || "").trim();
+
+        if (!trimmed) {
+          return res.status(400).json({
+            success: false,
+            message: "Please enter a value before adding it.",
+          });
+        }
+
+        items.push(trimmed);
+      } else if (action === "remove") {
+        if (!Number.isInteger(itemIndex) || itemIndex < 0 || itemIndex >= items.length) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid item index.",
+          });
+        }
+
+        items.splice(itemIndex, 1);
+      } else if (action === "move") {
+        if (!Number.isInteger(itemIndex) || itemIndex < 0 || itemIndex >= items.length) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid item index.",
+          });
+        }
+
+        const directionValue = Number(direction) || 0;
+        const newIndex = itemIndex + directionValue;
+
+        if (newIndex < 0 || newIndex >= items.length) {
+          return res.status(400).json({
+            success: false,
+            message: "Item cannot move outside the list.",
+          });
+        }
+
+        const [item] = items.splice(itemIndex, 1);
+        items.splice(newIndex, 0, item);
+      }
+    } else if (section === "milestones") {
+      if (action === "add") {
+        const trimmed = String(value || "").trim();
+
+        if (!trimmed) {
+          return res.status(400).json({
+            success: false,
+            message: "Please enter a milestone before adding it.",
+          });
+        }
+
+        roadmap.milestones.push(trimmed);
+      } else if (action === "remove") {
+        if (!Number.isInteger(itemIndex) || itemIndex < 0 || itemIndex >= roadmap.milestones.length) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid milestone index.",
+          });
+        }
+
+        roadmap.milestones.splice(itemIndex, 1);
+      } else if (action === "move") {
+        if (!Number.isInteger(itemIndex) || itemIndex < 0 || itemIndex >= roadmap.milestones.length) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid milestone index.",
+          });
+        }
+
+        const directionValue = Number(direction) || 0;
+        const newIndex = itemIndex + directionValue;
+
+        if (newIndex < 0 || newIndex >= roadmap.milestones.length) {
+          return res.status(400).json({
+            success: false,
+            message: "Milestone cannot move outside the list.",
+          });
+        }
+
+        const [item] = roadmap.milestones.splice(itemIndex, 1);
+        roadmap.milestones.splice(newIndex, 0, item);
+      }
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Unsupported roadmap section.",
+      });
+    }
+
+    roadmap.progress = syncProgressWithRoadmap(roadmap);
+    await roadmap.save();
+
+    return res.status(200).json({
+      success: true,
+      data: roadmap,
+    });
+  } catch (error) {
+    console.error("❌ UPDATE SEMESTER ROADMAP ERROR:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update roadmap.",
+      error: error.message,
+    });
+  }
+};
+
+// ======================================================
 // UPDATE PROGRESS
 // ======================================================
 
@@ -512,5 +813,6 @@ const getSemesterRoadmap = async (req, res) => {
 module.exports = {
   generateSemester,
   getSemesterRoadmap,
+  updateSemesterRoadmap,
   updateSemesterProgress,
 };
