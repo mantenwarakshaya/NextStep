@@ -21,6 +21,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+// API Routes
 const branchRoutes = require("./routes/branchRoutes");
 const authRoutes = require("./routes/auth");
 const roadmapRouter = require("./routes/roadmap");
@@ -29,9 +30,14 @@ app.use("/api/branches", branchRoutes);
 app.use("/api/roadmap", roadmapRouter);
 app.use("/api", authRoutes);
 
-// Test Route
-app.get("/", (req, res) => {
-  res.send("NextStep Backend is running successfully 🚀");
+// --- FRONTEND INTEGRATION ---
+// 1. Serve static production files from frontend build directory
+const frontendBuildPath = path.join(__dirname, "../../frontend/build");
+app.use(express.static(frontendBuildPath));
+
+// 2. Fallback route: Send index.html for non-API requests (handles React SPA routing)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendBuildPath, "index.html"));
 });
 
 const PORT = process.env.PORT || 7777;
