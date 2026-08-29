@@ -233,7 +233,7 @@ The backend will start on `http://localhost:7777`
 
 ```bash
 cd frontend
-npm start
+npm run dev
 ```
 
 The frontend will start on `http://localhost:3000` and open in your browser.
