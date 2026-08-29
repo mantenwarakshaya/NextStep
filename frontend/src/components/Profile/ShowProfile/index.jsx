@@ -14,8 +14,10 @@ import { LoaderView, ErrorView, EmptyView } from "../../Common";
 import "./index.css";
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:7777";
-
+  window.location.hostname === "localhost"
+    ? "http://localhost:7777"
+    : "";
+    
 const TOTAL_SEMESTERS = 8;
 
 export default function ShowProfile() {

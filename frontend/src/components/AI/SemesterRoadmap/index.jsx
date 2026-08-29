@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { EmptyView, ErrorView, LoaderView } from "../../Common";
 import "./index.css";
 
-const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:7777";
+const API_BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:7777"
+    : "";
 
 export default function Roadmap() {
   const [masterRoadmap, setMasterRoadmap] = useState(null);
@@ -53,7 +56,7 @@ export default function Roadmap() {
       setLoadingMaster(true);
       setError("");
 
-      const response = await fetch(`${BASE_URL}/api/roadmap/`, {
+      const response = await fetch(`${API_BASE_URL}/api/roadmap/`, {
         credentials: "include",
       });
 
@@ -84,7 +87,7 @@ export default function Roadmap() {
       setGeneratingMaster(true);
       setError("");
 
-      const response = await fetch(`${BASE_URL}/api/roadmap/generate`, {
+      const response = await fetch(`${API_BASE_URL}/api/roadmap/generate`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -139,7 +142,7 @@ export default function Roadmap() {
         Array.from({ length: semesterCount }, (_, i) => i + 1).map(
           async (semester) => {
             const response = await fetch(
-              `${BASE_URL}/api/roadmap/semester/${semester}`,
+              `${API_BASE_URL}/api/roadmap/semester/${semester}`,
               { credentials: "include" },
             );
             const data = await response.json();
@@ -235,7 +238,7 @@ export default function Roadmap() {
       const holidays = parseEvents(holidayText);
 
       const response = await fetch(
-        `${BASE_URL}/api/roadmap/semester/${currentSemester}`,
+        `${API_BASE_URL}/api/roadmap/semester/${currentSemester}`,
         {
           method: "POST",
           credentials: "include",
@@ -320,7 +323,7 @@ export default function Roadmap() {
       setError("");
 
       const response = await fetch(
-        `${BASE_URL}/api/roadmap/semester/${semester}`,
+        `${API_BASE_URL}/api/roadmap/semester/${semester}`,
         { credentials: "include" },
       );
 
@@ -433,7 +436,7 @@ export default function Roadmap() {
 
     try {
       const response = await fetch(
-        `${BASE_URL}/api/roadmap/semester/${semester}/progress`,
+        `${API_BASE_URL}/api/roadmap/semester/${semester}/progress`,
         {
           method: "PATCH",
           credentials: "include",
@@ -488,7 +491,7 @@ export default function Roadmap() {
     try {
       setError("");
 
-      const response = await fetch(`${BASE_URL}/api/roadmap/semester/${semester}`, {
+      const response = await fetch(`${API_BASE_URL}/api/roadmap/semester/${semester}`, {
         method: "PATCH",
         credentials: "include",
         headers: {

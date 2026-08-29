@@ -12,8 +12,10 @@ import { ErrorView, LoaderView } from "../../Common";
 import "./index.css";
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:7777";
-
+  window.location.hostname === "localhost"
+    ? "http://localhost:7777"
+    : "";
+    
 const SEMESTERS = Array.from({ length: 8 }, (_, index) => index + 1);
 
 export default function EditProfile() {

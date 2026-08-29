@@ -20,8 +20,10 @@ import {
 import "./index.css";
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:7777";
-
+  window.location.hostname === "localhost"
+    ? "http://localhost:7777"
+    : "";
+    
 const CATEGORY_ICONS = {
   "Computer Science & Engineering": Code2,
   Electronics: Cpu,
