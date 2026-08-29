@@ -33,7 +33,10 @@ function App() {
             PUBLIC ROUTES
         ================================================== */}
 
-        <Route path="/" element={<Landing />} />
+        <Route
+          path="/"
+          element={user ? <Navigate to="/dashboard" replace /> : <Landing />}
+        />
 
         <Route
           path="/login"

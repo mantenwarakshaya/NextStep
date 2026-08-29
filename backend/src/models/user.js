@@ -101,14 +101,6 @@ const userSchema = new mongoose.Schema(
       default: [],
     },
 
-    aiUsage: {
-      creditsRemaining: {
-        type: Number,
-        min: 0,
-        default: 1,
-      },
-    },
-
     currentSemester: {
       type: Number,
       min: 1,

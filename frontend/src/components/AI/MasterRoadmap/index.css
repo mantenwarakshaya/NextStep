@@ -1,0 +1,1347 @@
+/* =========================================================
+   BRANCH SELECTION — NextStep
+   ========================================================= */
+
+.bs-root {
+  min-height: 100vh;
+  background: var(--ns-paper);
+  color: var(--ns-text);
+  font-family:
+    "IBM Plex Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  padding: 2.6rem 2.2rem 7rem;
+  box-sizing: border-box;
+}
+
+.bs-root *,
+.sr-root * {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   STATES
+   ========================================================= */
+
+.bs-state,
+.sr-state {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ns-muted);
+  font-size: 14px;
+}
+
+.sr-state {
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.sr-state-error {
+  color: var(--ns-danger);
+}
+
+/* =========================================================
+   BRANCH HEADER
+   ========================================================= */
+
+.bs-header {
+  max-width: 680px;
+  margin: 0 auto 2.8rem;
+}
+
+.bs-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  color: var(--ns-accent);
+
+  background: var(--ns-accent-dim);
+
+  border-radius: var(--ns-radius-s);
+
+  padding: 5px 10px;
+  margin-bottom: 0.85rem;
+}
+
+.bs-header h1 {
+  font-family: inherit;
+
+  font-size: clamp(26px, 4vw, 34px);
+  line-height: 1.15;
+
+  font-weight: 600;
+  letter-spacing: -0.02em;
+
+  margin: 0 0 0.65rem;
+}
+
+.bs-header p {
+  max-width: 620px;
+
+  font-size: 14px;
+  line-height: 1.7;
+
+  color: var(--ns-muted);
+
+  margin: 0;
+}
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.bs-error {
+  max-width: 1100px;
+  margin: 0 auto 1.5rem;
+
+  background: var(--ns-danger-dim);
+  color: var(--ns-danger);
+
+  border: 1px solid color-mix(in srgb, var(--ns-danger) 20%, transparent);
+
+  border-radius: var(--ns-radius-m);
+
+  padding: 0.8rem 1rem;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   BRANCH GROUPS
+   ========================================================= */
+
+.bs-groups {
+  max-width: 1100px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 1.6rem;
+}
+
+.bs-group {
+  background: #fff;
+
+  border: 1px solid var(--ns-hairline);
+
+  border-radius: var(--ns-radius-l);
+
+  padding: 1.3rem;
+}
+
+/* =========================================================
+   GROUP HEADER
+   ========================================================= */
+
+.bs-group-header {
+  display: flex;
+  align-items: center;
+
+  gap: 0.65rem;
+
+  margin-bottom: 1rem;
+}
+
+.bs-group-icon {
+  width: 30px;
+  height: 30px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: var(--ns-radius-s);
+
+  background: var(--ns-accent-dim);
+  color: var(--ns-accent);
+}
+
+.bs-group-header h2 {
+  font-family: inherit;
+
+  font-size: 15.5px;
+  font-weight: 600;
+
+  letter-spacing: -0.01em;
+
+  margin: 0;
+}
+
+/* =========================================================
+   BRANCH GRID
+   ========================================================= */
+
+.bs-grid {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+
+  gap: 0.8rem;
+}
+
+/* =========================================================
+   BRANCH CARD
+   ========================================================= */
+
+.bs-card {
+  position: relative;
+
+  min-height: 120px;
+
+  display: block;
+
+  text-align: left;
+
+  background: #fff;
+
+  border: 1px solid var(--ns-hairline);
+
+  border-radius: var(--ns-radius-m);
+
+  padding: 1.1rem 1.15rem;
+
+  font-family: inherit;
+
+  cursor: pointer;
+
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.bs-card::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  top: 18px;
+  bottom: 18px;
+
+  width: 3px;
+
+  background: transparent;
+
+  border-radius: 0 4px 4px 0;
+
+  transition: background 160ms ease;
+}
+
+.bs-card:hover {
+  transform: translateY(-2px);
+
+  border-color: color-mix(in srgb, var(--ns-accent) 55%, var(--ns-hairline));
+
+  box-shadow:
+    0 8px 20px rgba(15, 23, 42, 0.05),
+    0 18px 35px rgba(15, 23, 42, 0.035);
+}
+
+.bs-card:focus-visible {
+  outline: 3px solid var(--ns-accent-dim);
+  outline-offset: 2px;
+}
+
+.bs-card.picked {
+  background: var(--ns-accent-dim);
+
+  border-color: var(--ns-accent);
+
+  box-shadow:
+    0 8px 22px rgba(15, 23, 42, 0.05),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.bs-card.picked::before {
+  background: var(--ns-accent);
+}
+
+/* =========================================================
+   CARD CHECK
+   ========================================================= */
+
+.bs-card-check {
+  position: absolute;
+
+  top: 0.9rem;
+  right: 0.9rem;
+
+  color: var(--ns-accent);
+
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.08));
+}
+
+/* =========================================================
+   CARD CONTENT
+   ========================================================= */
+
+.bs-card h3 {
+  font-family: inherit;
+
+  font-size: 14.5px;
+  line-height: 1.35;
+
+  font-weight: 600;
+
+  color: var(--ns-text);
+
+  margin: 0 0 0.5rem;
+
+  padding-right: 1.5rem;
+}
+
+.bs-card p {
+  font-size: 12.5px;
+  line-height: 1.55;
+
+  color: var(--ns-muted);
+
+  margin: 0;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   CAREER SEARCH (previously unstyled — used raw
+   browser defaults for input, results, and badges)
+   ========================================================= */
+
+.bs-search-input {
+  width: 100%;
+
+  background: #fff;
+
+  border: 1px solid var(--ns-hairline);
+
+  border-radius: var(--ns-radius-s);
+
+  padding: 10px 14px;
+
+  font-family: inherit;
+  font-size: 13.5px;
+  color: var(--ns-text);
+
+  outline: none;
+
+  transition: border-color 150ms ease;
+}
+
+.bs-search-input::placeholder {
+  color: var(--ns-muted-lt);
+}
+
+.bs-search-input:focus {
+  border-color: var(--ns-accent);
+}
+
+.bs-search-results {
+  margin-top: 0.6rem;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.4rem;
+
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.bs-search-empty {
+  font-size: 12.5px;
+
+  color: var(--ns-muted-lt);
+  font-style: italic;
+
+  padding: 0.3rem 0.2rem;
+
+  margin: 0;
+}
+
+.bs-search-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 0.6rem;
+
+  width: 100%;
+
+  background: #fff;
+
+  border: 1px solid var(--ns-hairline);
+
+  border-radius: var(--ns-radius-s);
+
+  padding: 9px 12px;
+
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ns-text);
+
+  cursor: pointer;
+  text-align: left;
+
+  transition:
+    border-color 150ms ease,
+    background 150ms ease;
+}
+
+.bs-search-item:hover {
+  border-color: var(--ns-muted-lt);
+}
+
+.bs-search-item.picked {
+  border-color: var(--ns-accent);
+  background: var(--ns-accent-dim);
+}
+
+.bs-search-badge {
+  flex-shrink: 0;
+
+  font-size: 11px;
+  color: var(--ns-muted-lt);
+
+  background: var(--ns-paper-dim);
+
+  padding: 3px 9px;
+
+  border-radius: var(--ns-radius-s);
+}
+
+.bs-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 0.5rem;
+
+  margin-bottom: 0.9rem;
+}
+
+.bs-chip {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  font-size: 12.5px;
+  font-weight: 600;
+
+  color: var(--ns-accent);
+  background: var(--ns-accent-dim);
+
+  padding: 5px 6px 5px 12px;
+
+  border-radius: 999px;
+}
+
+.bs-chip button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 16px;
+  height: 16px;
+
+  border: none;
+
+  background: rgba(42, 79, 203, 0.14);
+
+  border-radius: 50%;
+
+  color: var(--ns-accent);
+
+  cursor: pointer;
+
+  transition:
+    background 150ms ease,
+    color 150ms ease;
+}
+
+.bs-chip button:hover {
+  background: var(--ns-accent);
+  color: #fff;
+}
+
+/* =========================================================
+   STICKY CONFIRM BAR
+   ========================================================= */
+
+.bs-confirm-bar {
+  position: fixed;
+
+  left: 50%;
+  bottom: 1.1rem;
+
+  width: min(calc(100% - 2.4rem), 900px);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  padding: 0.75rem 0.75rem 0.75rem 1.1rem;
+
+  background: var(--ns-ink-950);
+  color: var(--ns-paper);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.22),
+    0 5px 15px rgba(15, 23, 42, 0.12);
+
+  transform: translate(-50%, calc(150% + 2rem));
+
+  transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  z-index: 50;
+}
+
+.bs-confirm-bar.visible {
+  transform: translate(-50%, 0);
+}
+
+.bs-confirm-bar span {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.bs-confirm-bar strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+/* =========================================================
+   CONFIRM BUTTON
+   ========================================================= */
+
+.bs-confirm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 38px;
+
+  padding: 0.6rem 1.15rem;
+
+  background: var(--ns-accent);
+  color: #fff;
+
+  border: none;
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 150ms ease,
+    filter 150ms ease;
+}
+
+.bs-confirm-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+.bs-confirm-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.bs-confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   CONFIRM MODAL
+   ========================================================= */
+
+.bs-modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 200;
+
+  background: rgba(15, 23, 42, 0.58);
+
+  backdrop-filter: blur(4px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 1.5rem;
+}
+
+.bs-modal {
+  width: min(100%, 410px);
+
+  background: #fff;
+
+  border: 1px solid var(--ns-hairline);
+
+  border-radius: 18px;
+
+  padding: 1.8rem 1.7rem 1.5rem;
+
+  text-align: center;
+
+  box-shadow:
+    0 35px 80px rgba(15, 23, 42, 0.25),
+    0 8px 25px rgba(15, 23, 42, 0.1);
+
+  animation: bs-modal-in 180ms ease-out;
+}
+
+@keyframes bs-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.bs-modal-icon {
+  color: var(--ns-danger);
+
+  margin-bottom: 0.8rem;
+}
+
+.bs-modal h2 {
+  font-family: inherit;
+
+  font-size: 18px;
+  font-weight: 600;
+
+  margin: 0 0 0.55rem;
+}
+
+.bs-modal p {
+  font-size: 13.5px;
+
+  line-height: 1.65;
+
+  color: var(--ns-muted);
+
+  margin: 0 0 1.4rem;
+}
+
+.bs-modal p strong {
+  color: var(--ns-text);
+}
+
+.bs-modal-actions {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 0.7rem;
+}
+
+.bs-modal-cancel,
+.bs-modal-confirm {
+  min-height: 42px;
+
+  padding: 0.65rem 1rem;
+
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 150ms ease,
+    opacity 150ms ease;
+}
+
+.bs-modal-cancel {
+  background: #fff;
+
+  color: var(--ns-muted);
+
+  border: 1px solid var(--ns-hairline);
+}
+
+.bs-modal-cancel:hover:not(:disabled) {
+  border-color: var(--ns-muted-lt);
+}
+
+.bs-modal-confirm {
+  background: var(--ns-danger);
+  color: #fff;
+
+  border: 1px solid var(--ns-danger);
+}
+
+.bs-modal-confirm:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.bs-modal-cancel:disabled,
+.bs-modal-confirm:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   ROADMAP DISPLAY
+   ========================================================= */
+
+.sr-root {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.6rem 2.2rem 3.5rem;
+  box-sizing: border-box;
+
+  font-family:
+    "IBM Plex Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  color: var(--ns-text);
+}
+
+.sr-state svg {
+  color: var(--ns-muted-lt);
+  margin-bottom: 0.5rem;
+}
+
+.sr-state-error svg {
+  color: var(--ns-danger);
+}
+
+.sr-state p {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ns-text);
+
+  margin: 0 0 0.3rem;
+}
+
+.sr-state span {
+  font-size: 12.5px;
+  color: var(--ns-muted);
+}
+
+.sr-state button {
+  margin-top: 1rem;
+
+  padding: 8px 16px;
+
+  background: var(--ns-accent);
+  color: #fff;
+
+  border: none;
+  border-radius: var(--ns-radius-s);
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: filter 150ms ease;
+}
+
+.sr-state button:hover {
+  filter: brightness(1.05);
+}
+
+.sr-specialization {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 0.9rem;
+
+  font-size: 12.5px;
+  color: var(--ns-muted);
+
+  background: var(--ns-paper-dim);
+
+  border: 1px solid var(--ns-hairline);
+
+  border-radius: 999px;
+
+  padding: 6px 12px 6px 10px;
+}
+
+.sr-specialization strong {
+  color: var(--ns-text);
+  font-weight: 600;
+}
+
+.sr-semester-objective {
+  font-size: 13px;
+  color: var(--ns-muted);
+  line-height: 1.55;
+
+  margin: 0 0 0.7rem;
+}
+
+/* =========================================================
+   ROADMAP HEADER
+   ========================================================= */
+
+.sr-header {
+  margin-bottom: 3rem;
+}
+
+.sr-eyebrow {
+  display: inline-flex;
+
+  align-items: center;
+  gap: 6px;
+
+  width: fit-content;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+
+  color: var(--ns-accent);
+
+  margin-bottom: 0.9rem;
+}
+
+.sr-header h1 {
+  font-family: inherit;
+
+  font-size: clamp(28px, 4vw, 36px);
+
+  line-height: 1.15;
+
+  font-weight: 700;
+
+  letter-spacing: -0.025em;
+
+  color: var(--ns-text);
+
+  margin: 0 0 0.55rem;
+}
+
+.sr-header p {
+  font-size: 14.5px;
+
+  line-height: 1.6;
+
+  color: var(--ns-muted);
+
+  margin: 0;
+}
+
+/* =========================================================
+   ROADMAP TIMELINE
+   A plain rail with small dots — the semester number
+   itself now lives as a large ghost numeral inside each
+   card, so the rail doesn't need to repeat it.
+   ========================================================= */
+
+.sr-track {
+  position: relative;
+
+  padding-left: 22px;
+}
+
+.sr-rail {
+  position: absolute;
+
+  left: 5px;
+
+  top: 8px;
+  bottom: 8px;
+
+  width: 1px;
+
+  background: var(--ns-hairline);
+}
+
+.sr-stop {
+  position: relative;
+
+  display: flex;
+
+  gap: 1.4rem;
+
+  padding-bottom: 1.4rem;
+}
+
+.sr-stop:last-child {
+  padding-bottom: 0;
+}
+
+/* =========================================================
+   SEMESTER NODE — a plain dot on the rail
+   ========================================================= */
+
+.sr-node {
+  position: relative;
+
+  z-index: 2;
+
+  top: 0.6rem;
+
+  width: 11px;
+  height: 11px;
+
+  flex-shrink: 0;
+
+  margin-left: -33px;
+
+  border-radius: 50%;
+
+  background: var(--ns-accent);
+
+  border: 3px solid var(--ns-paper);
+
+  box-sizing: content-box;
+}
+
+/* =========================================================
+   SEMESTER CARD
+   ========================================================= */
+
+.sr-card {
+  position: relative;
+
+  flex: 1;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  background: #fff;
+
+  border: 1px solid var(--ns-hairline);
+
+  border-radius: var(--ns-radius-l);
+
+  padding: 1.5rem 1.6rem 1.4rem;
+
+  transition:
+    border-color 170ms ease,
+    box-shadow 170ms ease;
+}
+
+.sr-card:hover {
+  border-color: var(--ns-muted-lt);
+
+  box-shadow: 0 10px 24px -14px rgba(15, 23, 42, 0.14);
+}
+
+/* the signature element: a large, quiet ghost numeral
+   marking which chapter of the roadmap this is */
+.sr-card-ghost-num {
+  position: absolute;
+
+  top: -0.6rem;
+  right: 1rem;
+
+  font-size: 72px;
+  font-weight: 700;
+
+  line-height: 1;
+
+  letter-spacing: -0.03em;
+
+  color: var(--ns-paper-dim);
+
+  z-index: 0;
+
+  pointer-events: none;
+
+  user-select: none;
+}
+
+/* =========================================================
+   SEMESTER TITLE
+   ========================================================= */
+
+.sr-card h3 {
+  position: relative;
+  z-index: 1;
+
+  font-family: inherit;
+
+  font-size: 16px;
+
+  line-height: 1.3;
+
+  font-weight: 700;
+
+  color: var(--ns-text);
+
+  margin: 0 0 0.5rem;
+}
+
+/* =========================================================
+   SKILL / TOPIC TAGS
+   Two visually distinct tag styles, since they carry
+   different information: skills are the concrete
+   competencies gained; topics are what gets covered
+   to build them.
+   ========================================================= */
+
+.sr-semester-objective {
+  position: relative;
+  z-index: 1;
+
+  font-size: 13.5px;
+  color: var(--ns-muted);
+  line-height: 1.6;
+
+  margin: 0 0 1.1rem;
+}
+
+.sr-tags-group {
+  position: relative;
+  z-index: 1;
+
+  margin-bottom: 0.85rem;
+}
+
+.sr-tags-group:last-child {
+  margin-bottom: 0;
+}
+
+.sr-tags-label {
+  display: block;
+
+  font-size: 10.5px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+
+  color: var(--ns-muted-lt);
+
+  margin-bottom: 0.5rem;
+}
+
+.sr-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 0.4rem;
+}
+
+.sr-tag {
+  display: inline-flex;
+  align-items: center;
+
+  font-size: 12px;
+  line-height: 1.4;
+
+  padding: 4px 11px;
+
+  border-radius: 999px;
+
+  white-space: nowrap;
+}
+
+.sr-tag-skill {
+  background: var(--ns-accent-dim);
+  color: var(--ns-accent);
+  font-weight: 600;
+}
+
+.sr-tag-topic {
+  background: #fff;
+  color: var(--ns-muted);
+  border: 1px solid var(--ns-hairline);
+}
+
+.sr-tags-empty {
+  position: relative;
+  z-index: 1;
+
+  font-size: 13px;
+  color: var(--ns-muted-lt);
+  font-style: italic;
+
+  margin: 0;
+}
+
+/* =========================================================
+   DESKTOP LARGE SCREENS
+   ========================================================= */
+
+@media (min-width: 1400px) {
+  .sr-root {
+    max-width: 1000px;
+  }
+
+  .bs-groups {
+    max-width: 1120px;
+  }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .bs-root {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .sr-root {
+    max-width: 100%;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .bs-root {
+    padding: 1.5rem 1rem 7rem;
+  }
+
+  .bs-header {
+    margin-bottom: 2rem;
+  }
+
+  .bs-header h1,
+  .sr-header h1 {
+    font-size: 29px;
+  }
+
+  .bs-header p,
+  .sr-header p {
+    font-size: 13.5px;
+  }
+
+  /* Branch groups */
+
+  .bs-groups {
+    gap: 1rem;
+  }
+
+  .bs-group {
+    padding: 1rem;
+
+    border-radius: 14px;
+  }
+
+  .bs-group-header {
+    margin-bottom: 0.85rem;
+  }
+
+  .bs-grid {
+    grid-template-columns: 1fr;
+
+    gap: 0.65rem;
+  }
+
+  .bs-card {
+    min-height: auto;
+
+    padding: 1rem;
+  }
+
+  /* Confirm bar */
+
+  .bs-confirm-bar {
+    width: calc(100% - 1.4rem);
+
+    left: 50%;
+    bottom: 0.7rem;
+
+    padding: 0.8rem;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 0.65rem;
+
+    border-radius: 13px;
+  }
+
+  .bs-confirm-bar span {
+    padding: 0 0.2rem;
+  }
+
+  .bs-confirm-btn {
+    width: 100%;
+  }
+
+  /* Modal */
+
+  .bs-modal-overlay {
+    padding: 1rem;
+  }
+
+  .bs-modal {
+    padding: 1.5rem 1.15rem 1.2rem;
+
+    border-radius: 16px;
+  }
+
+  .bs-modal-actions {
+    grid-template-columns: 1fr;
+  }
+
+  /* Roadmap */
+
+  .sr-root {
+    width: 100%;
+
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .sr-header {
+    margin-bottom: 2rem;
+  }
+
+  .sr-track {
+    padding-left: 16px;
+  }
+
+  .sr-rail {
+    left: 4px;
+  }
+
+  .sr-node {
+    width: 9px;
+    height: 9px;
+
+    margin-left: -25px;
+  }
+
+  .sr-stop {
+    gap: 1rem;
+
+    padding-bottom: 1rem;
+  }
+
+  .sr-card {
+    padding: 1.15rem 1.2rem 1.1rem;
+
+    border-radius: 12px;
+  }
+
+  .sr-card-ghost-num {
+    font-size: 52px;
+    top: -0.3rem;
+  }
+
+  .sr-card h3 {
+    font-size: 15px;
+  }
+
+  .sr-tag {
+    font-size: 11.5px;
+
+    padding: 4px 9px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 400px) {
+  .bs-root {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .bs-header h1,
+  .sr-header h1 {
+    font-size: 27px;
+  }
+
+  .bs-group {
+    padding: 0.8rem;
+  }
+
+  .sr-track {
+    padding-left: 14px;
+  }
+
+  .sr-rail {
+    left: 3px;
+  }
+
+  .sr-node {
+    width: 8px;
+    height: 8px;
+
+    margin-left: -21px;
+
+    border-width: 2px;
+  }
+
+  .sr-stop {
+    gap: 0.85rem;
+  }
+
+  .sr-card {
+    padding: 1rem 1rem 0.95rem;
+  }
+
+  .sr-card-ghost-num {
+    font-size: 42px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .bs-card,
+  .bs-confirm-bar,
+  .bs-confirm-btn,
+  .bs-modal,
+  .bs-modal-confirm,
+  .sr-card {
+    transition: none;
+  }
+
+  .bs-modal {
+    animation: none;
+  }
+}

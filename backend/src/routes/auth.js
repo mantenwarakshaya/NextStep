@@ -463,7 +463,12 @@ authRouter.delete("/profile/delete", userAuth, async (req, res) => {
 authRouter.post("/restore-account", async (req, res) => {
   try {
     const { emailId, password } = req.body;
-    const user = await User.findOne({ emailId }).setOptions({
+    // FIX: normalize email the same way signup/login do — otherwise a
+    // differently-cased or whitespace-padded email will never match the
+    // lowercase-normalized value that was stored at signup, and the
+    // restore lookup silently fails with a false "No account found."
+    const normalizedEmail = emailId?.trim().toLowerCase();
+    const user = await User.findOne({ emailId: normalizedEmail }).setOptions({
       includeDeleted: true,
     });
 
